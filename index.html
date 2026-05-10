@@ -889,10 +889,6 @@
                         }
                     }
                 } else {
-                    // Collaborator Logic
-                    const email = document.getElementById('emailInput').value;
-                    if (authMode === 'login') {
-                        await signInWithEmailAndPassword(auth, email, password);
                     // Collaborator Logic (Login Only)
                     const email = document.getElementById('emailInput').value;
                     await signInWithEmailAndPassword(auth, email, password);
