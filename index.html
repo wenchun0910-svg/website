@@ -304,7 +304,14 @@
         import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // === 1. Firebase Initialization ===
-        const firebaseConfig = JSON.parse(__firebase_config);
+        const firebaseConfig = {
+  apiKey: "AIzaSyC_hAeSmuRluu6sNvgGvY95NxS3DPjuzWg",
+  authDomain: "website-a6054.firebaseapp.com",
+  projectId: "website-a6054",
+  storageBucket: "website-a6054.firebasestorage.app",
+  messagingSenderId: "574297102239",
+  appId: "1:574297102239:web:d66832373222f7185b4faa"
+};
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         
