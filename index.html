@@ -300,11 +300,11 @@
     <!-- Scripts: Firebase & Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // === 1. Firebase Initialization ===
-     const firebaseConfig = {
+    const firebaseConfig = {
   apiKey: "AIzaSyC_hAeSmuRluu6sNvgGvY95NxS3DPjuzWg",
   authDomain: "website-a6054.firebaseapp.com",
   projectId: "website-a6054",
@@ -314,17 +314,15 @@
 };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        
-        // Secondary app specifically for admin to create users without logging themselves out
-        const secondaryApp = initializeApp(firebaseConfig, "Secondary");
-        const secondaryAuth = getAuth(secondaryApp);
-
         const db = getFirestore(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
         // === 2. Global State ===
-        let currentUser = null;
+        let currentAppUser = null; // Simulated App User (Username or 'admin')
+        let currentAppRole = null; // 'admin' or 'collab'
+        let currentUser = null;    // Real Firebase Auth User (Anonymous)
         let isAdmin = false;
+        
         let allLinks = [];
         let filteredLinks = [];
         let systemCategories = [];
@@ -335,8 +333,6 @@
 
         // Modals State
         let authMode = 'login'; // 'login', 'admin'
-        const ADMIN_INTERNAL_EMAIL = 'admin@wafu.local';
-        const COLLAB_DOMAIN = '@collab.wafu.local'; // Used internally to map simple usernames to emails
 
         // References to DOM Elements
         const DOM = {
@@ -365,22 +361,18 @@
         // Start initialization
         initAuth();
 
-        // Listen for Auth changes
+        // Listen for Auth changes (Firebase level)
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                // Update UI based on user role
-                updateAuthUI();
-                // Setup Firestore listeners only AFTER auth is verified
                 setupFirestoreListener();
             } else {
                 currentUser = null;
-                isAdmin = false;
-                updateAuthUI();
             }
         });
 
-        function updateAuthUI() {
+        // App Level UI Update
+        window.updateAuthUI = () => {
             const loginBtn = document.getElementById('loginBtn');
             const logoutBtn = document.getElementById('logoutBtn');
             const addBtn = document.getElementById('addBtn');
@@ -388,29 +380,27 @@
             const userEmail = document.getElementById('userEmail');
             const roleBadge = document.getElementById('userRoleBadge');
 
-            if (currentUser && !currentUser.isAnonymous) {
-                // Logged in via Email/Password
+            if (currentAppRole) {
+                // Logged in (Simulated)
                 loginBtn.classList.add('hidden');
                 logoutBtn.classList.remove('hidden');
                 addBtn.classList.remove('hidden');
                 userInfo.classList.remove('hidden');
                 userInfo.classList.add('flex');
                 
-                // Simple Role Logic: check for internal admin email
-                if (currentUser.email === ADMIN_INTERNAL_EMAIL) {
+                if (currentAppRole === 'admin') {
                     isAdmin = true;
                     roleBadge.textContent = "管理員";
                     roleBadge.className = "px-2 py-0.5 rounded text-xs text-white bg-crimsonDark";
-                    userEmail.classList.add('hidden'); // Hide the internal email text
+                    userEmail.classList.add('hidden');
                     document.getElementById('editTitleBtn').classList.remove('hidden');
                     document.getElementById('manageUsersBtn').classList.remove('hidden');
                 } else {
                     isAdmin = false;
                     roleBadge.textContent = "協作者";
                     roleBadge.className = "px-2 py-0.5 rounded text-xs text-white bg-blue-600";
-                    // Display just the username by removing the internal domain
-                    userEmail.textContent = currentUser.email.replace(COLLAB_DOMAIN, '');
-                    userEmail.classList.remove('hidden'); // Show collaborator username
+                    userEmail.textContent = currentAppUser;
+                    userEmail.classList.remove('hidden');
                     document.getElementById('editTitleBtn').classList.add('hidden');
                     document.getElementById('manageUsersBtn').classList.add('hidden');
                 }
@@ -428,11 +418,10 @@
                 isAdmin = false;
             }
             
-            // Re-render links to update edit/delete button visibility
             applyFiltersAndRender();
         }
 
-        // === 4. Data Fetching (Crucial Rule 1 & 2) ===
+        // === 4. Data Fetching ===
         let unsubscribeLinks = null;
         let unsubscribeConfig = null;
         let unsubscribeCategories = null;
@@ -469,16 +458,13 @@
                 }
             });
 
-            // Strict Path: artifacts/{appId}/public/data/links
+            // Listen to Links
             const linksRef = collection(db, 'artifacts', appId, 'public', 'data', 'links');
-            
-            // No complex queries. Fetch all, process locally.
             unsubscribeLinks = onSnapshot(linksRef, (snapshot) => {
                 allLinks = [];
                 snapshot.forEach((doc) => {
                     allLinks.push({ id: doc.id, ...doc.data() });
                 });
-                
                 updateCategories();
                 applyFiltersAndRender();
             }, (error) => {
@@ -492,14 +478,12 @@
             const currentFilterVal = DOM.category.value;
             DOM.category.innerHTML = `<option value="all">所有分類</option>` + 
                 systemCategories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-            
             if (systemCategories.find(c => c.name === currentFilterVal)) {
                 DOM.category.value = currentFilterVal;
             } else {
                 DOM.category.value = 'all';
             }
 
-            // Update Add/Edit Form category dropdown
             const itemCatSelect = document.getElementById('itemCategory');
             if(itemCatSelect) {
                 const currentItemCat = itemCatSelect.value;
@@ -514,24 +498,18 @@
             const searchTerm = DOM.search.value.toLowerCase().trim();
             const categoryFilter = DOM.category.value;
 
-            // Filter
             filteredLinks = allLinks.filter(link => {
                 const matchSearch = link.title.toLowerCase().includes(searchTerm) || 
                                     (link.category && link.category.toLowerCase().includes(searchTerm));
-                
                 const matchCategory = categoryFilter === 'all' || link.category === categoryFilter;
-                
                 return matchSearch && matchCategory;
             });
 
-            // Sort (Newest first)
             filteredLinks.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-            // Reset pagination if filtered items are fewer than current page capacity
             if ((currentPage - 1) * itemsPerPage >= filteredLinks.length) {
                 currentPage = 1;
             }
-
             renderLinks();
         }
 
@@ -553,7 +531,6 @@
 
             DOM.container.innerHTML = pageData.map(link => generateCardHTML(link)).join('');
 
-            // Pagination UI
             DOM.pagination.classList.remove('hidden');
             DOM.pageInfo.textContent = `顯示 ${startIndex + 1} - ${Math.min(endIndex, filteredLinks.length)} 筆，共 ${filteredLinks.length} 筆`;
             DOM.prevBtn.disabled = currentPage === 1;
@@ -563,25 +540,23 @@
         function generateCardHTML(link) {
             const dateStr = link.createdAt ? new Date(link.createdAt).toLocaleDateString('zh-TW') : '未知日期';
             const views = link.views || 0;
-
-            // Handle legacy data fallback (兼容舊資料)
             const dUrl = link.driveUrl || (link.type === 'document' ? link.url : '');
             const wUrl = link.websiteUrl || (link.type === 'website' ? link.url : '');
 
-            // Process creator display name (strip internal domains)
+            // Process creator display name
             let creatorDisplay = '匿名';
-            if (link.creatorEmail) {
-                if (link.creatorEmail === ADMIN_INTERNAL_EMAIL) {
-                    creatorDisplay = '管理員';
-                } else {
-                    creatorDisplay = link.creatorEmail.replace(COLLAB_DOMAIN, '');
-                }
+            if (link.creatorName) {
+                creatorDisplay = link.creatorName;
+            } else if (link.creatorEmail) {
+                creatorDisplay = link.creatorEmail.includes('@') ? '管理員' : link.creatorEmail; // Legacy
             }
 
             // Permission Logic
             let canEdit = false;
-            if (currentUser && !currentUser.isAnonymous) {
-                if (isAdmin || link.createdBy === currentUser.uid) {
+            if (currentAppRole === 'admin') {
+                canEdit = true;
+            } else if (currentAppRole === 'collab' && currentAppUser) {
+                if (link.creatorName === currentAppUser || (link.creatorEmail && link.creatorEmail.includes(currentAppUser))) {
                     canEdit = true;
                 }
             }
@@ -632,7 +607,6 @@
         DOM.category.addEventListener('change', () => { currentPage = 1; applyFiltersAndRender(); });
 
         // === 7. Exported Functions (Global Window) ===
-        
         window.changePage = (delta) => {
             currentPage += delta;
             applyFiltersAndRender();
@@ -640,12 +614,9 @@
         };
 
         window.incrementView = async (event, id, currentViews, url) => {
-            // Prevent default navigation to handle it in JS, allowing async update
             event.preventDefault();
-            window.open(url, '_blank'); // Open link immediately
-
-            if (!currentUser) return; // Need auth context to write (anonymous is fine)
-            
+            window.open(url, '_blank');
+            if (!currentUser) return; 
             try {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'links', id);
                 await updateDoc(docRef, { views: currentViews + 1 });
@@ -660,7 +631,7 @@
 
         window.openAuthModal = () => {
             document.getElementById('authError').classList.add('hidden');
-            setAuthMode('login'); // Reset to default
+            window.setAuthMode('login');
             authModal.classList.remove('hidden');
             setTimeout(() => {
                 authModal.classList.remove('opacity-0');
@@ -701,7 +672,6 @@
             }
         };
 
-        // Modals for Password and Collaborators
         window.openPasswordModal = () => {
             document.getElementById('passwordForm').reset();
             document.getElementById('pwdError').classList.add('hidden');
@@ -744,7 +714,6 @@
             document.getElementById('itemFormError').classList.add('hidden');
             document.getElementById('itemId').value = '';
             document.getElementById('itemModalTitle').textContent = '新增項目';
-            
             itemModal.classList.remove('hidden');
             setTimeout(() => {
                 itemModal.classList.remove('opacity-0');
@@ -758,12 +727,11 @@
             setTimeout(() => itemModal.classList.add('hidden'), 300);
         };
 
-        // --- Categories Management & Title Edition ---
+        // --- Title & Category Actions ---
         window.editSiteTitle = () => {
             if (!isAdmin) return;
             const titleEl = document.getElementById('siteTitleDisplay');
             const currentTitle = titleEl.textContent;
-            
             titleEl.outerHTML = `<input id="siteTitleInput" type="text" value="${currentTitle}" class="text-2xl font-serif font-bold text-crimsonDark tracking-wider bg-transparent border-b border-crimson focus:outline-none w-48" onblur="window.saveSiteTitle(this.value)" onkeydown="if(event.key === 'Enter') this.blur();" autofocus>`;
             document.getElementById('editTitleBtn').classList.add('hidden');
             setTimeout(() => { document.getElementById('siteTitleInput').focus(); }, 10);
@@ -772,15 +740,12 @@
         window.saveSiteTitle = async (newTitle) => {
             newTitle = newTitle.trim();
             const inputEl = document.getElementById('siteTitleInput');
-            
             try {
                 if (newTitle) {
                     const configRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config');
                     await setDoc(configRef, { siteTitle: newTitle }, { merge: true });
                 }
             } catch(e) { console.error(e); }
-            
-            // Revert UI if snapshot hasn't caught it yet
             if (inputEl) {
                 inputEl.outerHTML = `<h1 id="siteTitleDisplay" class="text-2xl font-serif font-bold text-crimsonDark tracking-wider">${newTitle || '中式知識庫'}</h1>`;
                 document.getElementById('editTitleBtn').classList.remove('hidden');
@@ -867,7 +832,7 @@
             }
         };
 
-        // --- Auth Actions ---
+        // --- Custom App Authentication ---
         window.handleAuth = async (e) => {
             e.preventDefault();
             const password = document.getElementById('passwordInput').value;
@@ -881,62 +846,56 @@
 
             try {
                 if (authMode === 'admin') {
-                    // Admin Login Logic using internal system email
-                    try {
-                        await signInWithEmailAndPassword(auth, ADMIN_INTERNAL_EMAIL, password);
-                    } catch (adminErr) {
-                        // If internal admin email doesn't exist yet, we check for default password 'admin123'
-                        if (adminErr.code === 'auth/user-not-found' || adminErr.code === 'auth/invalid-credential') {
-                            if (password === 'admin123') {
-                                try {
-                                    await createUserWithEmailAndPassword(auth, ADMIN_INTERNAL_EMAIL, password);
-                                } catch (createErr) {
-                                    throw createErr;
-                                }
-                            } else {
-                                throw new Error('管理員預設密碼錯誤！(提示：首次登入預設為 admin123)');
-                            }
-                        } else {
-                            throw adminErr; // Other errors (e.g. wrong password on existing account)
-                        }
+                    // Simulated Admin Auth against Firestore Config
+                    const configRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config');
+                    const configSnap = await getDoc(configRef);
+                    let adminPwd = 'admin123';
+                    
+                    if (configSnap.exists() && configSnap.data().adminPassword) {
+                        adminPwd = configSnap.data().adminPassword;
+                    } else {
+                        // First time saving default password
+                        await setDoc(configRef, { adminPassword: 'admin123' }, { merge: true });
+                    }
+
+                    if (password === adminPwd) {
+                        currentAppUser = '管理員';
+                        currentAppRole = 'admin';
+                    } else {
+                        throw new Error('管理員密碼錯誤！(提示：預設密碼為 admin123)');
                     }
                 } else {
-                    // Collaborator Logic (Login Only with Username)
-                    let username = document.getElementById('usernameInput').value.trim();
-                    const internalEmail = username + COLLAB_DOMAIN;
-                    await signInWithEmailAndPassword(auth, internalEmail, password);
+                    // Simulated Collab Auth against Firestore Collection
+                    const username = document.getElementById('usernameInput').value.trim();
+                    const collabRef = doc(db, 'artifacts', appId, 'public', 'data', 'collaborators', username);
+                    const collabSnap = await getDoc(collabRef);
+                    
+                    if (collabSnap.exists() && collabSnap.data().password === password) {
+                        currentAppUser = username;
+                        currentAppRole = 'collab';
+                    } else {
+                        throw new Error('帳號或密碼錯誤。');
+                    }
                 }
                 
-                closeAuthModal();
+                window.updateAuthUI();
+                window.closeAuthModal();
                 document.getElementById('authForm').reset();
             } catch (error) {
                 errorDiv.classList.remove('hidden');
-                if (error.message.includes('管理員預設密碼錯誤')) {
-                    errorDiv.textContent = error.message;
-                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                    errorDiv.textContent = '帳號或密碼錯誤。';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorDiv.textContent = '帳號格式不正確，請勿使用特殊符號或空白。';
-                } else {
-                    errorDiv.textContent = '發生錯誤：' + error.message;
-                }
+                errorDiv.textContent = error.message || '登入發生錯誤。';
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalBtnText;
             }
         };
 
-        window.handleLogout = async () => {
-            try {
-                await signOut(auth);
-                // After sign out, re-initialize anonymous auth to retain view privileges
-                initAuth();
-            } catch (error) {
-                console.error("Logout error", error);
-            }
+        window.handleLogout = () => {
+            currentAppUser = null;
+            currentAppRole = null;
+            window.updateAuthUI();
         };
 
-        // --- Account Management Actions ---
         window.handleChangePassword = async (e) => {
             e.preventDefault();
             const currentPwd = document.getElementById('currentPwd').value;
@@ -952,25 +911,28 @@
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 處理中...';
 
             try {
-                // Re-authenticate user first
-                const credential = EmailAuthProvider.credential(currentUser.email, currentPwd);
-                await reauthenticateWithCredential(currentUser, credential);
-                
-                // Then update password
-                await updatePassword(currentUser, newPwd);
-                
+                if (currentAppRole === 'admin') {
+                    const configRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config');
+                    const configSnap = await getDoc(configRef);
+                    if (configSnap.exists() && configSnap.data().adminPassword !== currentPwd) {
+                        throw new Error('目前的密碼錯誤。');
+                    }
+                    await setDoc(configRef, { adminPassword: newPwd }, { merge: true });
+                } else if (currentAppRole === 'collab') {
+                    const collabRef = doc(db, 'artifacts', appId, 'public', 'data', 'collaborators', currentAppUser);
+                    const collabSnap = await getDoc(collabRef);
+                    if (collabSnap.data().password !== currentPwd) {
+                        throw new Error('目前的密碼錯誤。');
+                    }
+                    await updateDoc(collabRef, { password: newPwd });
+                }
+
                 successDiv.classList.remove('hidden');
                 document.getElementById('passwordForm').reset();
-                setTimeout(closePasswordModal, 2000);
+                setTimeout(window.closePasswordModal, 2000);
             } catch (error) {
                 errorDiv.classList.remove('hidden');
-                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
-                    errorDiv.textContent = '目前的密碼錯誤。';
-                } else if (error.code === 'auth/weak-password') {
-                    errorDiv.textContent = '新密碼太弱，請至少輸入6個字元。';
-                } else {
-                    errorDiv.textContent = '修改失敗：' + error.message;
-                }
+                errorDiv.textContent = error.message || '修改失敗。';
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalBtnText;
@@ -983,20 +945,25 @@
 
             const username = document.getElementById('newCollabUsername').value.trim();
             const pwd = document.getElementById('newCollabPwd').value;
-            const internalEmail = username + COLLAB_DOMAIN;
             const msgDiv = document.getElementById('collabMsg');
             const submitBtn = document.getElementById('collabSubmitBtn');
             const originalBtnText = submitBtn.textContent;
 
             msgDiv.classList.add('hidden');
-            msgDiv.className = 'mb-4 p-2 text-sm rounded border'; // reset classes
+            msgDiv.className = 'mb-4 p-2 text-sm rounded border';
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 建立中...';
 
             try {
-                // Use secondaryAuth so the admin doesn't get logged out!
-                await createUserWithEmailAndPassword(secondaryAuth, internalEmail, pwd);
-                await signOut(secondaryAuth); // immediately sign out secondary instance
+                // Save account to firestore directly!
+                const collabRef = doc(db, 'artifacts', appId, 'public', 'data', 'collaborators', username);
+                const collabSnap = await getDoc(collabRef);
+                
+                if (collabSnap.exists()) {
+                    throw new Error('此帳號名稱已經被使用了。');
+                }
+
+                await setDoc(collabRef, { password: pwd, createdAt: Date.now() });
                 
                 msgDiv.classList.add('bg-green-50', 'text-green-700', 'border-green-100');
                 msgDiv.textContent = `成功！協作者 ${username} 已建立。`;
@@ -1004,13 +971,7 @@
                 document.getElementById('addCollabForm').reset();
             } catch (error) {
                 msgDiv.classList.add('bg-red-50', 'text-alert', 'border-red-100');
-                if (error.code === 'auth/email-already-in-use') {
-                    msgDiv.textContent = '建立失敗：此帳號名稱已經被使用了。';
-                } else if (error.code === 'auth/invalid-email') {
-                    msgDiv.textContent = '建立失敗：帳號格式不正確，請勿使用特殊符號或空白。';
-                } else {
-                    msgDiv.textContent = '建立失敗：' + error.message;
-                }
+                msgDiv.textContent = '建立失敗：' + error.message;
                 msgDiv.classList.remove('hidden');
             } finally {
                 submitBtn.disabled = false;
@@ -1021,7 +982,7 @@
         // --- CRUD Actions ---
         window.handleSaveItem = async (e) => {
             e.preventDefault();
-            if (!currentUser || currentUser.isAnonymous) return;
+            if (!currentAppRole) return;
             
             const errorDiv = document.getElementById('itemFormError');
             errorDiv.classList.add('hidden');
@@ -1051,18 +1012,15 @@
             try {
                 const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'links');
                 if (id) {
-                    // Update
                     const docRef = doc(colRef, id);
                     await updateDoc(docRef, data);
                 } else {
-                    // Create
                     data.createdAt = Date.now();
-                    data.createdBy = currentUser.uid;
-                    data.creatorEmail = currentUser.email;
+                    data.creatorName = currentAppUser; // Use Simulated User Role
                     data.views = 0;
                     await addDoc(colRef, data);
                 }
-                closeItemModal();
+                window.closeItemModal();
             } catch (error) {
                 console.error("Error saving document: ", error);
                 alert("儲存失敗，請檢查權限或網路。");
@@ -1078,18 +1036,14 @@
 
             document.getElementById('itemId').value = item.id;
             document.getElementById('itemTitle').value = item.title;
-            
-            // Handle legacy mapping (兼容舊資料寫法)
             const dUrl = item.driveUrl !== undefined ? item.driveUrl : (item.type === 'document' ? item.url : '');
             const wUrl = item.websiteUrl !== undefined ? item.websiteUrl : (item.type === 'website' ? item.url : '');
-            
             document.getElementById('itemDriveUrl').value = dUrl;
             document.getElementById('itemWebsiteUrl').value = wUrl;
             document.getElementById('itemCategory').value = item.category || '';
             document.getElementById('itemFormError').classList.add('hidden');
             
             document.getElementById('itemModalTitle').textContent = '編輯項目';
-            
             itemModal.classList.remove('hidden');
             setTimeout(() => {
                 itemModal.classList.remove('opacity-0');
@@ -1124,7 +1078,6 @@
                 console.error("Error deleting: ", error);
             }
         };
-
     </script>
 </body>
 </html>
