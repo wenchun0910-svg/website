@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>和風知識庫 | 文件與網站分享</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Noto Sans TC & Noto Serif TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        washi: '#F7F5FA',      // 淺紫白 (背景)
+                        matcha: '#855E96',     // 藤花紫 (主按鈕/強調)
+                        matchaDark: '#6A4A78', // 藤花紫深色
+                        azuki: '#9A4C47',      // 紅豆色 (刪除/警告)
+                        ink: '#3E3A35',        // 墨色 (文字)
+                        border: '#E3DDE8',     // 邊框色
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F7F5FA;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e3dde8' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: #3E3A35;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        h1, h2, h3, .font-serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F7F5FA; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C4C0B5; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #855E96; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white border-b border-border shadow-sm sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-fan text-matcha text-2xl"></i>
+                    <div class="flex items-center">
+                        <h1 id="siteTitleDisplay" class="text-2xl font-serif font-bold text-matchaDark tracking-wider">和風知識庫</h1>
+                        <button id="editTitleBtn" onclick="editSiteTitle()" class="hidden text-matcha hover:text-matchaDark ml-2" title="修改網站名稱"><i class="fa-solid fa-pen text-sm"></i></button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="userInfo" class="hidden text-sm text-ink items-center gap-2">
+                        <i class="fa-regular fa-circle-user text-lg"></i>
+                        <span id="userEmail" class="hidden sm:inline"></span>
+                        <span id="userRoleBadge" class="px-2 py-0.5 rounded text-xs text-white bg-matcha"></span>
+                        <button onclick="openPasswordModal()" class="text-gray-500 hover:text-matcha ml-1 transition" title="修改密碼"><i class="fa-solid fa-key"></i></button>
+                    </div>
+                    <button id="addBtn" onclick="openAddModal()" class="hidden bg-matcha hover:bg-matchaDark text-white px-4 py-2 rounded-md text-sm transition shadow-sm">
+                        <i class="fa-solid fa-plus mr-1"></i> 新增項目
+                    </button>
+                    <button id="loginBtn" onclick="openAuthModal()" class="border border-matcha text-matcha hover:bg-matcha hover:text-white px-4 py-2 rounded-md text-sm transition">
+                        <i class="fa-solid fa-right-to-bracket mr-1"></i> 登入/註冊
+                    </button>
+                    <button id="logoutBtn" onclick="handleLogout()" class="hidden border border-border text-ink hover:bg-gray-100 px-4 py-2 rounded-md text-sm transition">
+                        登出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Controls Section (Search & Filters) -->
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-border mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div class="w-full md:w-1/3 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
+                <input type="text" id="searchInput" placeholder="關鍵字搜尋文件與網站..." 
+                    class="w-full pl-10 pr-4 py-2 bg-washi border border-border rounded-md focus:outline-none focus:border-matcha focus:ring-1 focus:ring-matcha transition">
+            </div>
+            
+            <div class="w-full md:w-2/3 flex flex-col sm:flex-row gap-4 justify-end">
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-gray-500 whitespace-nowrap">分類:</label>
+                    <select id="categoryFilter" class="bg-washi border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:border-matcha w-full sm:w-auto min-w-[120px]">
+                        <option value="all">所有分類</option>
+                        <!-- Dynamic categories will be populated here -->
+                    </select>
+                    <button id="manageCatBtn" onclick="openCategoryModal()" class="hidden bg-washi border border-border text-ink hover:text-matcha px-3 py-2 rounded-md text-sm transition whitespace-nowrap">
+                        <i class="fa-solid fa-tags"></i> 分類管理
+                    </button>
+                    <button id="manageUsersBtn" onclick="openCollaboratorModal()" class="hidden bg-washi border border-border text-ink hover:text-matcha px-3 py-2 rounded-md text-sm transition whitespace-nowrap">
+                        <i class="fa-solid fa-users"></i> 協作者管理
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Links Grid -->
+        <div id="linksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-8">
+            <!-- Loading indicator -->
+            <div class="col-span-full flex justify-center py-12 text-matcha">
+                <i class="fa-solid fa-circle-notch fa-spin text-4xl"></i>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-border hidden">
+            <span id="pageInfo" class="text-sm text-gray-500">顯示 0 筆中的 0 筆</span>
+            <div class="flex gap-2">
+                <button id="prevBtn" onclick="changePage(-1)" class="px-3 py-1 border border-border rounded hover:bg-washi disabled:opacity-50 transition"><i class="fa-solid fa-chevron-left"></i> 上一頁</button>
+                <button id="nextBtn" onclick="changePage(1)" class="px-3 py-1 border border-border rounded hover:bg-washi disabled:opacity-50 transition">下一頁 <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-border mt-auto py-6">
+        <div class="max-w-6xl mx-auto px-4 text-center text-sm text-gray-400">
+            &copy; 2026 和風知識庫. 訪客不需登入即可觀看。管理員可於登入介面切換至「管理員」頁籤，僅需輸入密碼即可登入。
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-serif font-bold text-matchaDark" id="authTitle">帳號登入</h2>
+                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-ink"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <!-- Auth Mode Tabs -->
+            <div class="flex border-b border-border mb-4">
+                <button id="tabCollab" type="button" onclick="setAuthMode('login')" class="flex-1 py-2 text-sm font-bold text-matcha border-b-2 border-matcha transition">協作者</button>
+                <button id="tabAdmin" type="button" onclick="setAuthMode('admin')" class="flex-1 py-2 text-sm text-gray-500 hover:text-matcha transition">管理員</button>
+            </div>
+
+            <div id="authError" class="hidden mb-4 p-3 bg-red-50 text-azuki text-sm rounded border border-red-100"></div>
+            
+            <form id="authForm" onsubmit="handleAuth(event)">
+                <div class="mb-4" id="emailInputContainer">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">電子郵件</label>
+                    <input type="email" id="emailInput" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">密碼</label>
+                    <input type="password" id="passwordInput" required minlength="6" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha" placeholder="請輸入密碼">
+                </div>
+                <button type="submit" class="w-full bg-matcha hover:bg-matchaDark text-white font-medium py-2 rounded transition" id="authSubmitBtn">登入</button>
+            </form>
+            
+            <div class="mt-4 p-3 bg-washi rounded text-xs text-gray-500 border border-border">
+                <p>💡 <strong>權限說明：</strong></p>
+                <p>• <strong>管理員</strong>：擁有所有文件與分類的修改/刪除權限。(首次登入設定之密碼即為管理員密碼)</p>
+                <p>• <strong>協作者</strong>：由管理員建立帳號，僅能管理自己新增的文件與網站。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-serif font-bold text-matchaDark">修改密碼</h2>
+                <button onclick="closePasswordModal()" class="text-gray-400 hover:text-ink"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div id="pwdError" class="hidden mb-4 p-2 bg-red-50 text-azuki text-sm rounded border border-red-100"></div>
+            <div id="pwdSuccess" class="hidden mb-4 p-2 bg-green-50 text-green-700 text-sm rounded border border-green-100">密碼修改成功！</div>
+            
+            <form id="passwordForm" onsubmit="handleChangePassword(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">目前的密碼</label>
+                    <input type="password" id="currentPwd" required class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">新密碼 (至少6碼)</label>
+                    <input type="password" id="newPwd" required minlength="6" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                </div>
+                <button type="submit" class="w-full bg-matcha hover:bg-matchaDark text-white font-medium py-2 rounded transition" id="pwdSubmitBtn">確認修改</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Collaborator Management Modal -->
+    <div id="collaboratorModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-serif font-bold text-matchaDark">新增協作者帳號</h2>
+                <button onclick="closeCollaboratorModal()" class="text-gray-400 hover:text-ink"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div id="collabMsg" class="hidden mb-4 p-2 text-sm rounded border"></div>
+            
+            <form id="addCollabForm" onsubmit="handleAddCollaborator(event)">
+                <p class="text-xs text-gray-500 mb-4">在此建立新的協作者帳號。建立後，協作者即可使用此信箱與密碼登入，並可自行修改密碼。</p>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">協作者信箱 (登入帳號)</label>
+                    <input type="email" id="newCollabEmail" required class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">預設密碼 (至少6碼)</label>
+                    <input type="text" id="newCollabPwd" required minlength="6" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha" placeholder="例如：123456">
+                </div>
+                <button type="submit" class="w-full bg-matcha hover:bg-matchaDark text-white font-medium py-2 rounded transition" id="collabSubmitBtn">建立帳號</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="itemModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-serif font-bold text-matchaDark" id="itemModalTitle">新增項目</h2>
+                <button onclick="closeItemModal()" class="text-gray-400 hover:text-ink"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="itemForm" onsubmit="handleSaveItem(event)">
+                <input type="hidden" id="itemId">
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">標題名稱</label>
+                    <input type="text" id="itemTitle" required class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1"><i class="fa-solid fa-globe text-matcha"></i> 一般網站連結 (選填)</label>
+                    <input type="url" id="itemWebsiteUrl" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha" placeholder="https://...">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1"><i class="fa-brands fa-google-drive text-[#4285F4]"></i> 雲端硬碟文件連結 (選填)</label>
+                    <input type="url" id="itemDriveUrl" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha" placeholder="https://drive.google.com/...">
+                </div>
+
+                <div id="itemFormError" class="hidden mb-4 p-2 bg-red-50 text-azuki text-sm rounded border border-red-100">請至少填寫一個連結！</div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">分類</label>
+                    <select id="itemCategory" required class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                        <!-- Options generated dynamically -->
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeItemModal()" class="px-4 py-2 border border-border text-ink rounded hover:bg-washi transition">取消</button>
+                    <button type="submit" class="px-4 py-2 bg-matcha hover:bg-matchaDark text-white rounded transition" id="itemSubmitBtn">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Management Modal -->
+    <div id="categoryModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-serif font-bold text-matchaDark">管理分類</h2>
+                <button onclick="closeCategoryModal()" class="text-gray-400 hover:text-ink"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <form id="addCategoryForm" onsubmit="handleAddCategory(event)" class="mb-4 flex gap-2">
+                <input type="text" id="newCategoryName" required placeholder="新增分類名稱..." class="flex-grow px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha text-sm">
+                <button type="submit" class="bg-matcha hover:bg-matchaDark text-white px-3 py-2 rounded text-sm whitespace-nowrap transition">新增</button>
+            </form>
+
+            <div class="max-h-60 overflow-y-auto bg-washi border border-border rounded p-2" id="categoryManagerList">
+                <!-- Categories listed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts: Firebase & Application Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // === 1. Firebase Initialization ===
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // Secondary app specifically for admin to create users without logging themselves out
+        const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+        const secondaryAuth = getAuth(secondaryApp);
+
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // === 2. Global State ===
+        let currentUser = null;
+        let isAdmin = false;
+        let allLinks = [];
+        let filteredLinks = [];
+        let systemCategories = [];
+        
+        // Pagination
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // Modals State
+        let authMode = 'login'; // 'login', 'admin'
+        const ADMIN_INTERNAL_EMAIL = 'admin@wafu.local';
+
+        // References to DOM Elements
+        const DOM = {
+            search: document.getElementById('searchInput'),
+            category: document.getElementById('categoryFilter'),
+            container: document.getElementById('linksContainer'),
+            pagination: document.getElementById('pagination'),
+            pageInfo: document.getElementById('pageInfo'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn')
+        };
+
+        // === 3. Auth Setup (Crucial Rule 3) ===
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Auth Init Error:", error);
+            }
+        };
+
+        // Start initialization
+        initAuth();
+
+        // Listen for Auth changes
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                // Update UI based on user role
+                updateAuthUI();
+                // Setup Firestore listeners only AFTER auth is verified
+                setupFirestoreListener();
+            } else {
+                currentUser = null;
+                isAdmin = false;
+                updateAuthUI();
+            }
+        });
+
+        function updateAuthUI() {
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const addBtn = document.getElementById('addBtn');
+            const userInfo = document.getElementById('userInfo');
+            const userEmail = document.getElementById('userEmail');
+            const roleBadge = document.getElementById('userRoleBadge');
+
+            if (currentUser && !currentUser.isAnonymous) {
+                // Logged in via Email/Password
+                loginBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+                addBtn.classList.remove('hidden');
+                userInfo.classList.remove('hidden');
+                userInfo.classList.add('flex');
+                
+                // Simple Role Logic: check for internal admin email
+                if (currentUser.email === ADMIN_INTERNAL_EMAIL) {
+                    isAdmin = true;
+                    roleBadge.textContent = "管理員";
+                    roleBadge.className = "px-2 py-0.5 rounded text-xs text-white bg-matchaDark";
+                    userEmail.classList.add('hidden'); // Hide the internal email text
+                    document.getElementById('editTitleBtn').classList.remove('hidden');
+                    document.getElementById('manageUsersBtn').classList.remove('hidden');
+                } else {
+                    isAdmin = false;
+                    roleBadge.textContent = "協作者";
+                    roleBadge.className = "px-2 py-0.5 rounded text-xs text-white bg-blue-500";
+                    userEmail.textContent = currentUser.email;
+                    userEmail.classList.remove('hidden'); // Show collaborator email
+                    document.getElementById('editTitleBtn').classList.add('hidden');
+                    document.getElementById('manageUsersBtn').classList.add('hidden');
+                }
+                document.getElementById('manageCatBtn').classList.remove('hidden');
+            } else {
+                // Anonymous viewer
+                loginBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+                addBtn.classList.add('hidden');
+                userInfo.classList.add('hidden');
+                userInfo.classList.remove('flex');
+                document.getElementById('editTitleBtn').classList.add('hidden');
+                document.getElementById('manageCatBtn').classList.add('hidden');
+                document.getElementById('manageUsersBtn').classList.add('hidden');
+                isAdmin = false;
+            }
+            
+            // Re-render links to update edit/delete button visibility
+            applyFiltersAndRender();
+        }
+
+        // === 4. Data Fetching (Crucial Rule 1 & 2) ===
+        let unsubscribeLinks = null;
+        let unsubscribeConfig = null;
+        let unsubscribeCategories = null;
+
+        function setupFirestoreListener() {
+            if (unsubscribeLinks) unsubscribeLinks();
+            if (unsubscribeConfig) unsubscribeConfig();
+            if (unsubscribeCategories) unsubscribeCategories();
+            if (!currentUser) return; // Guard
+
+            // Listen to Settings/Config (Title)
+            const configRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config');
+            unsubscribeConfig = onSnapshot(configRef, (docSnap) => {
+                if (docSnap.exists() && docSnap.data().siteTitle) {
+                    const titleEl = document.getElementById('siteTitleDisplay');
+                    if(titleEl && titleEl.tagName === 'H1') {
+                        titleEl.textContent = docSnap.data().siteTitle;
+                    }
+                    document.title = docSnap.data().siteTitle + " | 文件與網站分享";
+                }
+            });
+
+            // Listen to Categories
+            const catRef = collection(db, 'artifacts', appId, 'public', 'data', 'categories');
+            unsubscribeCategories = onSnapshot(catRef, (snapshot) => {
+                systemCategories = [];
+                snapshot.forEach(doc => {
+                    systemCategories.push({ id: doc.id, ...doc.data() });
+                });
+                systemCategories.sort((a,b) => a.name.localeCompare(b.name));
+                updateCategories();
+                if(!document.getElementById('categoryModal').classList.contains('hidden')) {
+                    window.renderCategoryManager();
+                }
+            });
+
+            // Strict Path: artifacts/{appId}/public/data/links
+            const linksRef = collection(db, 'artifacts', appId, 'public', 'data', 'links');
+            
+            // No complex queries. Fetch all, process locally.
+            unsubscribeLinks = onSnapshot(linksRef, (snapshot) => {
+                allLinks = [];
+                snapshot.forEach((doc) => {
+                    allLinks.push({ id: doc.id, ...doc.data() });
+                });
+                
+                updateCategories();
+                applyFiltersAndRender();
+            }, (error) => {
+                console.error("Firestore Error:", error);
+                DOM.container.innerHTML = `<div class="col-span-full text-center text-azuki p-4 bg-red-50 rounded">讀取資料失敗，請確認連線。</div>`;
+            });
+        }
+
+        // === 5. Filtering, Sorting, and Pagination ===
+        function updateCategories() {
+            const currentFilterVal = DOM.category.value;
+            DOM.category.innerHTML = `<option value="all">所有分類</option>` + 
+                systemCategories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            
+            if (systemCategories.find(c => c.name === currentFilterVal)) {
+                DOM.category.value = currentFilterVal;
+            } else {
+                DOM.category.value = 'all';
+            }
+
+            // Update Add/Edit Form category dropdown
+            const itemCatSelect = document.getElementById('itemCategory');
+            if(itemCatSelect) {
+                const currentItemCat = itemCatSelect.value;
+                itemCatSelect.innerHTML = systemCategories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+                if (currentItemCat && systemCategories.find(c => c.name === currentItemCat)) {
+                    itemCatSelect.value = currentItemCat;
+                }
+            }
+        }
+
+        function applyFiltersAndRender() {
+            const searchTerm = DOM.search.value.toLowerCase().trim();
+            const categoryFilter = DOM.category.value;
+
+            // Filter
+            filteredLinks = allLinks.filter(link => {
+                const matchSearch = link.title.toLowerCase().includes(searchTerm) || 
+                                    (link.category && link.category.toLowerCase().includes(searchTerm));
+                
+                const matchCategory = categoryFilter === 'all' || link.category === categoryFilter;
+                
+                return matchSearch && matchCategory;
+            });
+
+            // Sort (Newest first)
+            filteredLinks.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+            // Reset pagination if filtered items are fewer than current page capacity
+            if ((currentPage - 1) * itemsPerPage >= filteredLinks.length) {
+                currentPage = 1;
+            }
+
+            renderLinks();
+        }
+
+        function renderLinks() {
+            if (filteredLinks.length === 0) {
+                DOM.container.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-gray-400 border-2 border-dashed border-border rounded-lg bg-white">
+                        <i class="fa-regular fa-folder-open text-4xl mb-3 opacity-50"></i>
+                        <p>未找到任何相關文件或網站</p>
+                    </div>`;
+                DOM.pagination.classList.add('hidden');
+                return;
+            }
+
+            const totalPages = Math.ceil(filteredLinks.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = filteredLinks.slice(startIndex, endIndex);
+
+            DOM.container.innerHTML = pageData.map(link => generateCardHTML(link)).join('');
+
+            // Pagination UI
+            DOM.pagination.classList.remove('hidden');
+            DOM.pageInfo.textContent = `顯示 ${startIndex + 1} - ${Math.min(endIndex, filteredLinks.length)} 筆，共 ${filteredLinks.length} 筆`;
+            DOM.prevBtn.disabled = currentPage === 1;
+            DOM.nextBtn.disabled = currentPage === totalPages;
+        }
+
+        function generateCardHTML(link) {
+            const dateStr = link.createdAt ? new Date(link.createdAt).toLocaleDateString('zh-TW') : '未知日期';
+            const views = link.views || 0;
+
+            // Handle legacy data fallback (兼容舊資料)
+            const dUrl = link.driveUrl || (link.type === 'document' ? link.url : '');
+            const wUrl = link.websiteUrl || (link.type === 'website' ? link.url : '');
+
+            // Permission Logic
+            let canEdit = false;
+            if (currentUser && !currentUser.isAnonymous) {
+                if (isAdmin || link.createdBy === currentUser.uid) {
+                    canEdit = true;
+                }
+            }
+
+            const actionsHtml = canEdit ? `
+                <div class="flex gap-2 mt-3 pt-3 border-t border-border">
+                    <button onclick="editItem('${link.id}')" class="text-xs text-matcha hover:underline"><i class="fa-solid fa-pen"></i> 編輯</button>
+                    <button onclick="deleteItem('${link.id}')" class="text-xs text-azuki hover:underline"><i class="fa-solid fa-trash"></i> 刪除</button>
+                </div>
+            ` : '';
+
+            let linksHtml = '';
+            if (dUrl) {
+                linksHtml += `<a href="${dUrl}" target="_blank" onclick="window.incrementView(event, '${link.id}', ${views}, '${dUrl}')" class="inline-flex items-center gap-1.5 text-sm text-[#4285F4] hover:text-blue-700 hover:underline bg-blue-50 px-2.5 py-1.5 rounded-md border border-blue-100 transition"><i class="fa-brands fa-google-drive"></i> 雲端文件</a>`;
+            }
+            if (wUrl) {
+                linksHtml += `<a href="${wUrl}" target="_blank" onclick="window.incrementView(event, '${link.id}', ${views}, '${wUrl}')" class="inline-flex items-center gap-1.5 text-sm text-matcha hover:text-matchaDark hover:underline bg-washi px-2.5 py-1.5 rounded-md border border-matcha/30 transition"><i class="fa-solid fa-globe"></i> 一般網站</a>`;
+            }
+
+            return `
+                <div class="bg-white p-5 rounded-lg border border-border card-hover flex flex-col justify-between h-full relative">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="inline-block px-2 py-1 bg-washi text-xs text-gray-600 rounded-sm border border-border">${link.category || '未分類'}</span>
+                            <span class="text-xs text-gray-400 flex items-center gap-1" title="觀看次數">
+                                <i class="fa-regular fa-eye"></i> ${views}
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-ink mb-3 line-clamp-2 leading-tight">${link.title}</h3>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            ${linksHtml}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto">
+                        <div class="flex justify-between items-center text-xs text-gray-400 border-t border-border/50 pt-2">
+                            <span>建立者: ${link.creatorEmail ? link.creatorEmail.split('@')[0] : '匿名'}</span>
+                            <span>${dateStr}</span>
+                        </div>
+                        ${actionsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // === 6. Event Listeners for Filters ===
+        ['input', 'change'].forEach(evt => DOM.search.addEventListener(evt, () => { currentPage = 1; applyFiltersAndRender(); }));
+        DOM.category.addEventListener('change', () => { currentPage = 1; applyFiltersAndRender(); });
+
+        // === 7. Exported Functions (Global Window) ===
+        
+        window.changePage = (delta) => {
+            currentPage += delta;
+            applyFiltersAndRender();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.incrementView = async (event, id, currentViews, url) => {
+            // Prevent default navigation to handle it in JS, allowing async update
+            event.preventDefault();
+            window.open(url, '_blank'); // Open link immediately
+
+            if (!currentUser) return; // Need auth context to write (anonymous is fine)
+            
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'links', id);
+                await updateDoc(docRef, { views: currentViews + 1 });
+            } catch (error) {
+                console.error("Failed to update view count:", error);
+            }
+        };
+
+        // --- Modals Control ---
+        const authModal = document.getElementById('authModal');
+        const itemModal = document.getElementById('itemModal');
+
+        window.openAuthModal = () => {
+            document.getElementById('authError').classList.add('hidden');
+            setAuthMode('login'); // Reset to default
+            authModal.classList.remove('hidden');
+            setTimeout(() => {
+                authModal.classList.remove('opacity-0');
+                authModal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        };
+
+        window.closeAuthModal = () => {
+            authModal.classList.add('opacity-0');
+            authModal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => authModal.classList.add('hidden'), 300);
+        };
+
+        window.setAuthMode = (mode) => {
+            authMode = mode;
+            const tabCollab = document.getElementById('tabCollab');
+            const tabAdmin = document.getElementById('tabAdmin');
+            const emailContainer = document.getElementById('emailInputContainer');
+            const emailInput = document.getElementById('emailInput');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const authError = document.getElementById('authError');
+            
+            authError.classList.add('hidden');
+            document.getElementById('passwordInput').value = '';
+
+            if (mode === 'admin') {
+                tabAdmin.className = "flex-1 py-2 text-sm font-bold text-matcha border-b-2 border-matcha transition";
+                tabCollab.className = "flex-1 py-2 text-sm text-gray-500 hover:text-matcha transition";
+                emailContainer.classList.add('hidden');
+                emailInput.required = false;
+                submitBtn.textContent = '登入管理員';
+            } else {
+                tabCollab.className = "flex-1 py-2 text-sm font-bold text-matcha border-b-2 border-matcha transition";
+                tabAdmin.className = "flex-1 py-2 text-sm text-gray-500 hover:text-matcha transition";
+                emailContainer.classList.remove('hidden');
+                emailInput.required = true;
+                submitBtn.textContent = '登入協作者';
+            }
+        };
+
+        // Modals for Password and Collaborators
+        window.openPasswordModal = () => {
+            document.getElementById('passwordForm').reset();
+            document.getElementById('pwdError').classList.add('hidden');
+            document.getElementById('pwdSuccess').classList.add('hidden');
+            const modal = document.getElementById('passwordModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        };
+
+        window.closePasswordModal = () => {
+            const modal = document.getElementById('passwordModal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+
+        window.openCollaboratorModal = () => {
+            document.getElementById('addCollabForm').reset();
+            document.getElementById('collabMsg').classList.add('hidden');
+            const modal = document.getElementById('collaboratorModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        };
+
+        window.closeCollaboratorModal = () => {
+            const modal = document.getElementById('collaboratorModal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+
+        window.openAddModal = () => {
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemFormError').classList.add('hidden');
+            document.getElementById('itemId').value = '';
+            document.getElementById('itemModalTitle').textContent = '新增項目';
+            
+            itemModal.classList.remove('hidden');
+            setTimeout(() => {
+                itemModal.classList.remove('opacity-0');
+                itemModal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        };
+
+        window.closeItemModal = () => {
+            itemModal.classList.add('opacity-0');
+            itemModal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => itemModal.classList.add('hidden'), 300);
+        };
+
+        // --- Categories Management & Title Edition ---
+        window.editSiteTitle = () => {
+            if (!isAdmin) return;
+            const titleEl = document.getElementById('siteTitleDisplay');
+            const currentTitle = titleEl.textContent;
+            
+            titleEl.outerHTML = `<input id="siteTitleInput" type="text" value="${currentTitle}" class="text-2xl font-serif font-bold text-matchaDark tracking-wider bg-transparent border-b border-matcha focus:outline-none w-48" onblur="window.saveSiteTitle(this.value)" onkeydown="if(event.key === 'Enter') this.blur();" autofocus>`;
+            document.getElementById('editTitleBtn').classList.add('hidden');
+            setTimeout(() => { document.getElementById('siteTitleInput').focus(); }, 10);
+        };
+
+        window.saveSiteTitle = async (newTitle) => {
+            newTitle = newTitle.trim();
+            const inputEl = document.getElementById('siteTitleInput');
+            
+            try {
+                if (newTitle) {
+                    const configRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config');
+                    await setDoc(configRef, { siteTitle: newTitle }, { merge: true });
+                }
+            } catch(e) { console.error(e); }
+            
+            // Revert UI if snapshot hasn't caught it yet
+            if (inputEl) {
+                inputEl.outerHTML = `<h1 id="siteTitleDisplay" class="text-2xl font-serif font-bold text-matchaDark tracking-wider">${newTitle || '和風知識庫'}</h1>`;
+                document.getElementById('editTitleBtn').classList.remove('hidden');
+            }
+        };
+
+        window.openCategoryModal = () => {
+            const modal = document.getElementById('categoryModal');
+            modal.classList.remove('hidden');
+            window.renderCategoryManager();
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        };
+
+        window.closeCategoryModal = () => {
+            const modal = document.getElementById('categoryModal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+
+        window.renderCategoryManager = () => {
+            const list = document.getElementById('categoryManagerList');
+            if(systemCategories.length === 0) {
+                list.innerHTML = '<div class="text-sm text-gray-500 text-center py-4">目前無任何分類。</div>';
+                return;
+            }
+            list.innerHTML = systemCategories.map(c => `
+                <div class="flex justify-between items-center py-2 border-b border-border last:border-0" id="cat-row-${c.id}">
+                    <span class="text-sm text-ink" id="cat-name-${c.id}">${c.name}</span>
+                    <div class="flex gap-2" id="cat-acts-${c.id}">
+                        <button onclick="window.editCategoryUI('${c.id}', '${c.name}')" class="text-matcha hover:text-matchaDark text-xs px-2 py-1"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="window.deleteCategoryUI(this, '${c.id}')" class="text-azuki hover:text-red-700 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.editCategoryUI = (id, oldName) => {
+            const nameEl = document.getElementById(`cat-name-${id}`);
+            const actsEl = document.getElementById(`cat-acts-${id}`);
+            nameEl.innerHTML = `<input type="text" id="cat-input-${id}" value="${oldName}" class="w-full px-2 py-1 text-sm border border-matcha rounded focus:outline-none">`;
+            actsEl.innerHTML = `<button onclick="window.saveCategory('${id}')" class="text-matcha text-xs bg-washi border border-matcha px-2 py-1 rounded"><i class="fa-solid fa-check"></i> 儲存</button>`;
+        };
+
+        window.saveCategory = async (id) => {
+            const newVal = document.getElementById(`cat-input-${id}`).value.trim();
+            if(newVal) {
+                try {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', id), { name: newVal });
+                } catch(e) { console.error(e); }
+            }
+        };
+
+        window.deleteCategoryUI = async (btn, id) => {
+            if (btn.dataset.confirm !== 'true') {
+                btn.dataset.confirm = 'true';
+                btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 確定刪除?';
+                setTimeout(() => {
+                    if(btn) {
+                        btn.dataset.confirm = 'false';
+                        btn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                    }
+                }, 3000);
+                return;
+            }
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', id));
+            } catch(e) { console.error(e); }
+        };
+
+        window.handleAddCategory = async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('newCategoryName');
+            const name = input.value.trim();
+            if (!name) return;
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'categories'), { name });
+                input.value = '';
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        // --- Auth Actions ---
+        window.handleAuth = async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('authError');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const originalBtnText = submitBtn.textContent;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 處理中...';
+            errorDiv.classList.add('hidden');
+
+            try {
+                if (authMode === 'admin') {
+                    // Admin Login Logic using internal system email
+                    try {
+                        await signInWithEmailAndPassword(auth, ADMIN_INTERNAL_EMAIL, password);
+                    } catch (adminErr) {
+                        // If internal admin email doesn't exist yet, we create it with this password! (First-time setup)
+                        if (adminErr.code === 'auth/user-not-found' || adminErr.code === 'auth/invalid-credential') {
+                            try {
+                                await createUserWithEmailAndPassword(auth, ADMIN_INTERNAL_EMAIL, password);
+                            } catch (createErr) {
+                                if (createErr.code === 'auth/email-already-in-use') {
+                                    throw new Error('密碼錯誤！'); // Email exists, so it was just a wrong password
+                                } else {
+                                    throw createErr;
+                                }
+                            }
+                        } else {
+                            throw adminErr; // Other errors (e.g. wrong password on existing account)
+                        }
+                    }
+                } else {
+                    // Collaborator Logic
+                    const email = document.getElementById('emailInput').value;
+                    if (authMode === 'login') {
+                        await signInWithEmailAndPassword(auth, email, password);
+                    // Collaborator Logic (Login Only)
+                    const email = document.getElementById('emailInput').value;
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+                
+                closeAuthModal();
+                document.getElementById('authForm').reset();
+            } catch (error) {
+                errorDiv.classList.remove('hidden');
+                if (error.message === '密碼錯誤！') {
+                    errorDiv.textContent = '管理員密碼錯誤。';
+                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    errorDiv.textContent = '信箱或密碼錯誤。';
+                } else if (error.code === 'auth/email-already-in-use') {
+                    errorDiv.textContent = '此信箱已被註冊。';
+                } else {
+                    errorDiv.textContent = '發生錯誤：' + error.message;
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            }
+        };
+
+        window.handleLogout = async () => {
+            try {
+                await signOut(auth);
+                // After sign out, re-initialize anonymous auth to retain view privileges
+                initAuth();
+            } catch (error) {
+                console.error("Logout error", error);
+            }
+        };
+
+        // --- Account Management Actions ---
+        window.handleChangePassword = async (e) => {
+            e.preventDefault();
+            const currentPwd = document.getElementById('currentPwd').value;
+            const newPwd = document.getElementById('newPwd').value;
+            const errorDiv = document.getElementById('pwdError');
+            const successDiv = document.getElementById('pwdSuccess');
+            const submitBtn = document.getElementById('pwdSubmitBtn');
+            const originalBtnText = submitBtn.textContent;
+
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 處理中...';
+
+            try {
+                // Re-authenticate user first
+                const credential = EmailAuthProvider.credential(currentUser.email, currentPwd);
+                await reauthenticateWithCredential(currentUser, credential);
+                
+                // Then update password
+                await updatePassword(currentUser, newPwd);
+                
+                successDiv.classList.remove('hidden');
+                document.getElementById('passwordForm').reset();
+                setTimeout(closePasswordModal, 2000);
+            } catch (error) {
+                errorDiv.classList.remove('hidden');
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+                    errorDiv.textContent = '目前的密碼錯誤。';
+                } else if (error.code === 'auth/weak-password') {
+                    errorDiv.textContent = '新密碼太弱，請至少輸入6個字元。';
+                } else {
+                    errorDiv.textContent = '修改失敗：' + error.message;
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            }
+        };
+
+        window.handleAddCollaborator = async (e) => {
+            e.preventDefault();
+            if (!isAdmin) return;
+
+            const email = document.getElementById('newCollabEmail').value;
+            const pwd = document.getElementById('newCollabPwd').value;
+            const msgDiv = document.getElementById('collabMsg');
+            const submitBtn = document.getElementById('collabSubmitBtn');
+            const originalBtnText = submitBtn.textContent;
+
+            msgDiv.classList.add('hidden');
+            msgDiv.className = 'mb-4 p-2 text-sm rounded border'; // reset classes
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 建立中...';
+
+            try {
+                // Use secondaryAuth so the admin doesn't get logged out!
+                await createUserWithEmailAndPassword(secondaryAuth, email, pwd);
+                await signOut(secondaryAuth); // immediately sign out secondary instance
+                
+                msgDiv.classList.add('bg-green-50', 'text-green-700', 'border-green-100');
+                msgDiv.textContent = `成功！協作者 ${email} 已建立。`;
+                msgDiv.classList.remove('hidden');
+                document.getElementById('addCollabForm').reset();
+            } catch (error) {
+                msgDiv.classList.add('bg-red-50', 'text-azuki', 'border-red-100');
+                if (error.code === 'auth/email-already-in-use') {
+                    msgDiv.textContent = '建立失敗：此信箱已經是協作者了。';
+                } else {
+                    msgDiv.textContent = '建立失敗：' + error.message;
+                }
+                msgDiv.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            }
+        };
+
+        // --- CRUD Actions ---
+        window.handleSaveItem = async (e) => {
+            e.preventDefault();
+            if (!currentUser || currentUser.isAnonymous) return;
+            
+            const errorDiv = document.getElementById('itemFormError');
+            errorDiv.classList.add('hidden');
+
+            const id = document.getElementById('itemId').value;
+            const title = document.getElementById('itemTitle').value.trim();
+            const driveUrl = document.getElementById('itemDriveUrl').value.trim();
+            const websiteUrl = document.getElementById('itemWebsiteUrl').value.trim();
+            const category = document.getElementById('itemCategory').value.trim();
+            
+            if (!driveUrl && !websiteUrl) {
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            const submitBtn = document.getElementById('itemSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 儲存中';
+
+            const data = {
+                title,
+                driveUrl,
+                websiteUrl,
+                category,
+            };
+
+            try {
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'links');
+                if (id) {
+                    // Update
+                    const docRef = doc(colRef, id);
+                    await updateDoc(docRef, data);
+                } else {
+                    // Create
+                    data.createdAt = Date.now();
+                    data.createdBy = currentUser.uid;
+                    data.creatorEmail = currentUser.email;
+                    data.views = 0;
+                    await addDoc(colRef, data);
+                }
+                closeItemModal();
+            } catch (error) {
+                console.error("Error saving document: ", error);
+                alert("儲存失敗，請檢查權限或網路。");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '儲存';
+            }
+        };
+
+        window.editItem = (id) => {
+            const item = allLinks.find(l => l.id === id);
+            if (!item) return;
+
+            document.getElementById('itemId').value = item.id;
+            document.getElementById('itemTitle').value = item.title;
+            
+            // Handle legacy mapping (兼容舊資料寫法)
+            const dUrl = item.driveUrl !== undefined ? item.driveUrl : (item.type === 'document' ? item.url : '');
+            const wUrl = item.websiteUrl !== undefined ? item.websiteUrl : (item.type === 'website' ? item.url : '');
+            
+            document.getElementById('itemDriveUrl').value = dUrl;
+            document.getElementById('itemWebsiteUrl').value = wUrl;
+            document.getElementById('itemCategory').value = item.category || '';
+            document.getElementById('itemFormError').classList.add('hidden');
+            
+            document.getElementById('itemModalTitle').textContent = '編輯項目';
+            
+            itemModal.classList.remove('hidden');
+            setTimeout(() => {
+                itemModal.classList.remove('opacity-0');
+                itemModal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        };
+
+        window.deleteItem = async (id) => {
+            // No custom modal implemented for confirm to keep code compact, using simple logic check
+            // Since alert/confirm are discouraged, I'll build a quick inline confirm or just delete.
+            // Let's implement a safe soft delete button state change.
+            const btn = event.currentTarget;
+            if (btn.dataset.confirm !== 'true') {
+                btn.dataset.confirm = 'true';
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 確認刪除?';
+                btn.classList.replace('text-azuki', 'text-white');
+                btn.classList.add('bg-azuki', 'px-2', 'py-1', 'rounded', '-my-1');
+                
+                setTimeout(() => {
+                    if (btn) {
+                        btn.dataset.confirm = 'false';
+                        btn.innerHTML = originalHtml;
+                        btn.classList.replace('text-white', 'text-azuki');
+                        btn.classList.remove('bg-azuki', 'px-2', 'py-1', 'rounded', '-my-1');
+                    }
+                }, 3000);
+                return;
+            }
+
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'links', id);
+                await deleteDoc(docRef);
+            } catch (error) {
+                console.error("Error deleting: ", error);
+            }
+        };
+
+    </script>
+</body>
+</html>
