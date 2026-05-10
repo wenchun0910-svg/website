@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>和風知識庫 | 文件與網站分享</title>
+    <title>中式知識庫 | 文件與網站分享</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
@@ -16,12 +16,12 @@
             theme: {
                 extend: {
                     colors: {
-                        washi: '#F7F5FA',      // 淺紫白 (背景)
-                        matcha: '#855E96',     // 藤花紫 (主按鈕/強調)
-                        matchaDark: '#6A4A78', // 藤花紫深色
-                        azuki: '#9A4C47',      // 紅豆色 (刪除/警告)
-                        ink: '#3E3A35',        // 墨色 (文字)
-                        border: '#E3DDE8',     // 邊框色
+                        rice: '#FDFBF7',         // 宣紙白 (背景)
+                        crimson: '#8B1A1A',      // 暗紅/中國紅 (主按鈕/強調)
+                        crimsonDark: '#631212',  // 暗紅深色 (標題/懸停)
+                        alert: '#B91C1C',        // 警告紅 (刪除)
+                        ink: '#2B2B2B',          // 墨黑 (文字)
+                        border: '#E6E2D8',       // 窗花邊框色
                     },
                     fontFamily: {
                         sans: ['"Noto Sans TC"', 'sans-serif'],
@@ -33,9 +33,9 @@
     </script>
     <style>
         body {
-            background-color: #F7F5FA;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e3dde8' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            color: #3E3A35;
+            background-color: #FDFBF7;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e6e2d8' fill-opacity='0.5'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: #2B2B2B;
             font-family: 'Noto Sans TC', sans-serif;
         }
         h1, h2, h3, .font-serif {
@@ -43,7 +43,7 @@
         }
         .card-hover:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(139, 26, 26, 0.08);
             transition: all 0.3s ease;
         }
         /* Hide scrollbar for clean look */
@@ -51,14 +51,14 @@
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #F7F5FA; 
+            background: #FDFBF7; 
         }
         ::-webkit-scrollbar-thumb {
-            background: #C4C0B5; 
+            background: #D1CBB8; 
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #855E96; 
+            background: #8B1A1A; 
         }
     </style>
 </head>
@@ -69,23 +69,23 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-fan text-matcha text-2xl"></i>
+                    <i class="fa-solid fa-stamp text-crimson text-2xl"></i>
                     <div class="flex items-center">
-                        <h1 id="siteTitleDisplay" class="text-2xl font-serif font-bold text-matchaDark tracking-wider">和風知識庫</h1>
-                        <button id="editTitleBtn" onclick="editSiteTitle()" class="hidden text-matcha hover:text-matchaDark ml-2" title="修改網站名稱"><i class="fa-solid fa-pen text-sm"></i></button>
+                        <h1 id="siteTitleDisplay" class="text-2xl font-serif font-bold text-crimsonDark tracking-wider">中式知識庫</h1>
+                        <button id="editTitleBtn" onclick="editSiteTitle()" class="hidden text-crimson hover:text-crimsonDark ml-2" title="修改網站名稱"><i class="fa-solid fa-pen text-sm"></i></button>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
                     <div id="userInfo" class="hidden text-sm text-ink items-center gap-2">
                         <i class="fa-regular fa-circle-user text-lg"></i>
                         <span id="userEmail" class="hidden sm:inline"></span>
-                        <span id="userRoleBadge" class="px-2 py-0.5 rounded text-xs text-white bg-matcha"></span>
-                        <button onclick="openPasswordModal()" class="text-gray-500 hover:text-matcha ml-1 transition" title="修改密碼"><i class="fa-solid fa-key"></i></button>
+                        <span id="userRoleBadge" class="px-2 py-0.5 rounded text-xs text-white bg-crimson"></span>
+                        <button onclick="openPasswordModal()" class="text-gray-500 hover:text-crimson ml-1 transition" title="修改密碼"><i class="fa-solid fa-key"></i></button>
                     </div>
-                    <button id="addBtn" onclick="openAddModal()" class="hidden bg-matcha hover:bg-matchaDark text-white px-4 py-2 rounded-md text-sm transition shadow-sm">
+                    <button id="addBtn" onclick="openAddModal()" class="hidden bg-crimson hover:bg-crimsonDark text-white px-4 py-2 rounded-md text-sm transition shadow-sm">
                         <i class="fa-solid fa-plus mr-1"></i> 新增項目
                     </button>
-                    <button id="loginBtn" onclick="openAuthModal()" class="border border-matcha text-matcha hover:bg-matcha hover:text-white px-4 py-2 rounded-md text-sm transition">
+                    <button id="loginBtn" onclick="openAuthModal()" class="border border-crimson text-crimson hover:bg-crimson hover:text-white px-4 py-2 rounded-md text-sm transition">
                         <i class="fa-solid fa-right-to-bracket mr-1"></i> 登入/註冊
                     </button>
                     <button id="logoutBtn" onclick="handleLogout()" class="hidden border border-border text-ink hover:bg-gray-100 px-4 py-2 rounded-md text-sm transition">
@@ -104,20 +104,20 @@
             <div class="w-full md:w-1/3 relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
                 <input type="text" id="searchInput" placeholder="關鍵字搜尋文件與網站..." 
-                    class="w-full pl-10 pr-4 py-2 bg-washi border border-border rounded-md focus:outline-none focus:border-matcha focus:ring-1 focus:ring-matcha transition">
+                    class="w-full pl-10 pr-4 py-2 bg-rice border border-border rounded-md focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition">
             </div>
             
             <div class="w-full md:w-2/3 flex flex-col sm:flex-row gap-4 justify-end">
                 <div class="flex items-center gap-2">
                     <label class="text-sm text-gray-500 whitespace-nowrap">分類:</label>
-                    <select id="categoryFilter" class="bg-washi border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:border-matcha w-full sm:w-auto min-w-[120px]">
+                    <select id="categoryFilter" class="bg-rice border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:border-crimson w-full sm:w-auto min-w-[120px]">
                         <option value="all">所有分類</option>
                         <!-- Dynamic categories will be populated here -->
                     </select>
-                    <button id="manageCatBtn" onclick="openCategoryModal()" class="hidden bg-washi border border-border text-ink hover:text-matcha px-3 py-2 rounded-md text-sm transition whitespace-nowrap">
+                    <button id="manageCatBtn" onclick="openCategoryModal()" class="hidden bg-rice border border-border text-ink hover:text-crimson px-3 py-2 rounded-md text-sm transition whitespace-nowrap">
                         <i class="fa-solid fa-tags"></i> 分類管理
                     </button>
-                    <button id="manageUsersBtn" onclick="openCollaboratorModal()" class="hidden bg-washi border border-border text-ink hover:text-matcha px-3 py-2 rounded-md text-sm transition whitespace-nowrap">
+                    <button id="manageUsersBtn" onclick="openCollaboratorModal()" class="hidden bg-rice border border-border text-ink hover:text-crimson px-3 py-2 rounded-md text-sm transition whitespace-nowrap">
                         <i class="fa-solid fa-users"></i> 協作者管理
                     </button>
                 </div>
@@ -127,7 +127,7 @@
         <!-- Links Grid -->
         <div id="linksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-8">
             <!-- Loading indicator -->
-            <div class="col-span-full flex justify-center py-12 text-matcha">
+            <div class="col-span-full flex justify-center py-12 text-crimson">
                 <i class="fa-solid fa-circle-notch fa-spin text-4xl"></i>
             </div>
         </div>
@@ -136,8 +136,8 @@
         <div id="pagination" class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-border hidden">
             <span id="pageInfo" class="text-sm text-gray-500">顯示 0 筆中的 0 筆</span>
             <div class="flex gap-2">
-                <button id="prevBtn" onclick="changePage(-1)" class="px-3 py-1 border border-border rounded hover:bg-washi disabled:opacity-50 transition"><i class="fa-solid fa-chevron-left"></i> 上一頁</button>
-                <button id="nextBtn" onclick="changePage(1)" class="px-3 py-1 border border-border rounded hover:bg-washi disabled:opacity-50 transition">下一頁 <i class="fa-solid fa-chevron-right"></i></button>
+                <button id="prevBtn" onclick="changePage(-1)" class="px-3 py-1 border border-border rounded hover:bg-rice disabled:opacity-50 transition"><i class="fa-solid fa-chevron-left"></i> 上一頁</button>
+                <button id="nextBtn" onclick="changePage(1)" class="px-3 py-1 border border-border rounded hover:bg-rice disabled:opacity-50 transition">下一頁 <i class="fa-solid fa-chevron-right"></i></button>
             </div>
         </div>
 
@@ -146,41 +146,41 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-border mt-auto py-6">
         <div class="max-w-6xl mx-auto px-4 text-center text-sm text-gray-400">
-            &copy; 2026 和風知識庫. 訪客不需登入即可觀看。管理員可於登入介面切換至「管理員」頁籤，僅需輸入密碼即可登入。
+            &copy; 2026 知識庫系統.
         </div>
     </footer>
 
     <!-- Auth Modal -->
     <div id="authModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 border-t-4 border-crimson">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-serif font-bold text-matchaDark" id="authTitle">帳號登入</h2>
+                <h2 class="text-xl font-serif font-bold text-crimsonDark" id="authTitle">帳號登入</h2>
                 <button onclick="closeAuthModal()" class="text-gray-400 hover:text-ink"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             
             <!-- Auth Mode Tabs -->
             <div class="flex border-b border-border mb-4">
-                <button id="tabCollab" type="button" onclick="setAuthMode('login')" class="flex-1 py-2 text-sm font-bold text-matcha border-b-2 border-matcha transition">協作者</button>
-                <button id="tabAdmin" type="button" onclick="setAuthMode('admin')" class="flex-1 py-2 text-sm text-gray-500 hover:text-matcha transition">管理員</button>
+                <button id="tabCollab" type="button" onclick="setAuthMode('login')" class="flex-1 py-2 text-sm font-bold text-crimson border-b-2 border-crimson transition">協作者</button>
+                <button id="tabAdmin" type="button" onclick="setAuthMode('admin')" class="flex-1 py-2 text-sm text-gray-500 hover:text-crimson transition">管理員</button>
             </div>
 
-            <div id="authError" class="hidden mb-4 p-3 bg-red-50 text-azuki text-sm rounded border border-red-100"></div>
+            <div id="authError" class="hidden mb-4 p-3 bg-red-50 text-alert text-sm rounded border border-red-100"></div>
             
             <form id="authForm" onsubmit="handleAuth(event)">
-                <div class="mb-4" id="emailInputContainer">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">電子郵件</label>
-                    <input type="email" id="emailInput" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                <div class="mb-4" id="usernameInputContainer">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">登入帳號</label>
+                    <input type="text" id="usernameInput" class="w-full px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson" placeholder="請輸入帳號 (例如: user01)">
                 </div>
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-1">密碼</label>
-                    <input type="password" id="passwordInput" required minlength="6" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha" placeholder="請輸入密碼">
+                    <input type="password" id="passwordInput" required minlength="6" class="w-full px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson" placeholder="請輸入密碼">
                 </div>
-                <button type="submit" class="w-full bg-matcha hover:bg-matchaDark text-white font-medium py-2 rounded transition" id="authSubmitBtn">登入</button>
+                <button type="submit" class="w-full bg-crimson hover:bg-crimsonDark text-white font-medium py-2 rounded transition" id="authSubmitBtn">登入</button>
             </form>
             
-            <div class="mt-4 p-3 bg-washi rounded text-xs text-gray-500 border border-border">
+            <div class="mt-4 p-3 bg-rice rounded text-xs text-gray-500 border border-border">
                 <p>💡 <strong>權限說明：</strong></p>
-                <p>• <strong>管理員</strong>：擁有所有文件與分類的修改/刪除權限。(首次登入設定之密碼即為管理員密碼)</p>
+                <p>• <strong>管理員</strong>：擁有所有修改與刪除權限。(預設密碼為 <b>admin123</b>，登入後可修改)</p>
                 <p>• <strong>協作者</strong>：由管理員建立帳號，僅能管理自己新增的文件與網站。</p>
             </div>
         </div>
@@ -188,59 +188,59 @@
 
     <!-- Password Reset Modal -->
     <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 border-t-4 border-crimson">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-serif font-bold text-matchaDark">修改密碼</h2>
+                <h2 class="text-xl font-serif font-bold text-crimsonDark">修改密碼</h2>
                 <button onclick="closePasswordModal()" class="text-gray-400 hover:text-ink"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             
-            <div id="pwdError" class="hidden mb-4 p-2 bg-red-50 text-azuki text-sm rounded border border-red-100"></div>
+            <div id="pwdError" class="hidden mb-4 p-2 bg-red-50 text-alert text-sm rounded border border-red-100"></div>
             <div id="pwdSuccess" class="hidden mb-4 p-2 bg-green-50 text-green-700 text-sm rounded border border-green-100">密碼修改成功！</div>
             
             <form id="passwordForm" onsubmit="handleChangePassword(event)">
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">目前的密碼</label>
-                    <input type="password" id="currentPwd" required class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                    <input type="password" id="currentPwd" required class="w-full px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson">
                 </div>
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-1">新密碼 (至少6碼)</label>
-                    <input type="password" id="newPwd" required minlength="6" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                    <input type="password" id="newPwd" required minlength="6" class="w-full px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson">
                 </div>
-                <button type="submit" class="w-full bg-matcha hover:bg-matchaDark text-white font-medium py-2 rounded transition" id="pwdSubmitBtn">確認修改</button>
+                <button type="submit" class="w-full bg-crimson hover:bg-crimsonDark text-white font-medium py-2 rounded transition" id="pwdSubmitBtn">確認修改</button>
             </form>
         </div>
     </div>
 
     <!-- Collaborator Management Modal -->
     <div id="collaboratorModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 border-t-4 border-crimson">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-serif font-bold text-matchaDark">新增協作者帳號</h2>
+                <h2 class="text-xl font-serif font-bold text-crimsonDark">新增協作者帳號</h2>
                 <button onclick="closeCollaboratorModal()" class="text-gray-400 hover:text-ink"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             
             <div id="collabMsg" class="hidden mb-4 p-2 text-sm rounded border"></div>
             
             <form id="addCollabForm" onsubmit="handleAddCollaborator(event)">
-                <p class="text-xs text-gray-500 mb-4">在此建立新的協作者帳號。建立後，協作者即可使用此信箱與密碼登入，並可自行修改密碼。</p>
+                <p class="text-xs text-gray-500 mb-4">在此建立新的協作者帳號。建立後，協作者即可使用此帳號與密碼登入，並可自行修改密碼。</p>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">協作者信箱 (登入帳號)</label>
-                    <input type="email" id="newCollabEmail" required class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">協作者帳號</label>
+                    <input type="text" id="newCollabUsername" required class="w-full px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson" placeholder="請設定一組簡短帳號 (英數字)">
                 </div>
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-1">預設密碼 (至少6碼)</label>
-                    <input type="text" id="newCollabPwd" required minlength="6" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha" placeholder="例如：123456">
+                    <input type="text" id="newCollabPwd" required minlength="6" class="w-full px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson" placeholder="例如：123456">
                 </div>
-                <button type="submit" class="w-full bg-matcha hover:bg-matchaDark text-white font-medium py-2 rounded transition" id="collabSubmitBtn">建立帳號</button>
+                <button type="submit" class="w-full bg-crimson hover:bg-crimsonDark text-white font-medium py-2 rounded transition" id="collabSubmitBtn">建立帳號</button>
             </form>
         </div>
     </div>
 
     <!-- Add/Edit Modal -->
     <div id="itemModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 transform scale-95 transition-transform duration-300 border-t-4 border-crimson">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-serif font-bold text-matchaDark" id="itemModalTitle">新增項目</h2>
+                <h2 class="text-xl font-serif font-bold text-crimsonDark" id="itemModalTitle">新增項目</h2>
                 <button onclick="closeItemModal()" class="text-gray-400 hover:text-ink"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <form id="itemForm" onsubmit="handleSaveItem(event)">
@@ -248,31 +248,31 @@
                 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">標題名稱</label>
-                    <input type="text" id="itemTitle" required class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                    <input type="text" id="itemTitle" required class="w-full px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson">
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1"><i class="fa-solid fa-globe text-matcha"></i> 一般網站連結 (選填)</label>
-                    <input type="url" id="itemWebsiteUrl" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha" placeholder="https://...">
+                    <label class="block text-sm font-medium text-gray-700 mb-1"><i class="fa-solid fa-globe text-crimson"></i> 一般網站連結 (選填)</label>
+                    <input type="url" id="itemWebsiteUrl" class="w-full px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson" placeholder="https://...">
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1"><i class="fa-brands fa-google-drive text-[#4285F4]"></i> 雲端硬碟文件連結 (選填)</label>
-                    <input type="url" id="itemDriveUrl" class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha" placeholder="https://drive.google.com/...">
+                    <input type="url" id="itemDriveUrl" class="w-full px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson" placeholder="https://drive.google.com/...">
                 </div>
 
-                <div id="itemFormError" class="hidden mb-4 p-2 bg-red-50 text-azuki text-sm rounded border border-red-100">請至少填寫一個連結！</div>
+                <div id="itemFormError" class="hidden mb-4 p-2 bg-red-50 text-alert text-sm rounded border border-red-100">請至少填寫一個連結！</div>
 
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-1">分類</label>
-                    <select id="itemCategory" required class="w-full px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha">
+                    <select id="itemCategory" required class="w-full px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson">
                         <!-- Options generated dynamically -->
                     </select>
                 </div>
 
                 <div class="flex justify-end gap-2">
-                    <button type="button" onclick="closeItemModal()" class="px-4 py-2 border border-border text-ink rounded hover:bg-washi transition">取消</button>
-                    <button type="submit" class="px-4 py-2 bg-matcha hover:bg-matchaDark text-white rounded transition" id="itemSubmitBtn">儲存</button>
+                    <button type="button" onclick="closeItemModal()" class="px-4 py-2 border border-border text-ink rounded hover:bg-rice transition">取消</button>
+                    <button type="submit" class="px-4 py-2 bg-crimson hover:bg-crimsonDark text-white rounded transition" id="itemSubmitBtn">儲存</button>
                 </div>
             </form>
         </div>
@@ -280,18 +280,18 @@
 
     <!-- Category Management Modal -->
     <div id="categoryModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 border-t-4 border-crimson">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-serif font-bold text-matchaDark">管理分類</h2>
+                <h2 class="text-xl font-serif font-bold text-crimsonDark">管理分類</h2>
                 <button onclick="closeCategoryModal()" class="text-gray-400 hover:text-ink"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             
             <form id="addCategoryForm" onsubmit="handleAddCategory(event)" class="mb-4 flex gap-2">
-                <input type="text" id="newCategoryName" required placeholder="新增分類名稱..." class="flex-grow px-3 py-2 bg-washi border border-border rounded focus:outline-none focus:border-matcha text-sm">
-                <button type="submit" class="bg-matcha hover:bg-matchaDark text-white px-3 py-2 rounded text-sm whitespace-nowrap transition">新增</button>
+                <input type="text" id="newCategoryName" required placeholder="新增分類名稱..." class="flex-grow px-3 py-2 bg-rice border border-border rounded focus:outline-none focus:border-crimson text-sm">
+                <button type="submit" class="bg-crimson hover:bg-crimsonDark text-white px-3 py-2 rounded text-sm whitespace-nowrap transition">新增</button>
             </form>
 
-            <div class="max-h-60 overflow-y-auto bg-washi border border-border rounded p-2" id="categoryManagerList">
+            <div class="max-h-60 overflow-y-auto bg-rice border border-border rounded p-2" id="categoryManagerList">
                 <!-- Categories listed here -->
             </div>
         </div>
@@ -304,7 +304,7 @@
         import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // === 1. Firebase Initialization ===
-       const firebaseConfig = {
+     const firebaseConfig = {
   apiKey: "AIzaSyC_hAeSmuRluu6sNvgGvY95NxS3DPjuzWg",
   authDomain: "website-a6054.firebaseapp.com",
   projectId: "website-a6054",
@@ -336,6 +336,7 @@
         // Modals State
         let authMode = 'login'; // 'login', 'admin'
         const ADMIN_INTERNAL_EMAIL = 'admin@wafu.local';
+        const COLLAB_DOMAIN = '@collab.wafu.local'; // Used internally to map simple usernames to emails
 
         // References to DOM Elements
         const DOM = {
@@ -399,16 +400,17 @@
                 if (currentUser.email === ADMIN_INTERNAL_EMAIL) {
                     isAdmin = true;
                     roleBadge.textContent = "管理員";
-                    roleBadge.className = "px-2 py-0.5 rounded text-xs text-white bg-matchaDark";
+                    roleBadge.className = "px-2 py-0.5 rounded text-xs text-white bg-crimsonDark";
                     userEmail.classList.add('hidden'); // Hide the internal email text
                     document.getElementById('editTitleBtn').classList.remove('hidden');
                     document.getElementById('manageUsersBtn').classList.remove('hidden');
                 } else {
                     isAdmin = false;
                     roleBadge.textContent = "協作者";
-                    roleBadge.className = "px-2 py-0.5 rounded text-xs text-white bg-blue-500";
-                    userEmail.textContent = currentUser.email;
-                    userEmail.classList.remove('hidden'); // Show collaborator email
+                    roleBadge.className = "px-2 py-0.5 rounded text-xs text-white bg-blue-600";
+                    // Display just the username by removing the internal domain
+                    userEmail.textContent = currentUser.email.replace(COLLAB_DOMAIN, '');
+                    userEmail.classList.remove('hidden'); // Show collaborator username
                     document.getElementById('editTitleBtn').classList.add('hidden');
                     document.getElementById('manageUsersBtn').classList.add('hidden');
                 }
@@ -449,7 +451,7 @@
                     if(titleEl && titleEl.tagName === 'H1') {
                         titleEl.textContent = docSnap.data().siteTitle;
                     }
-                    document.title = docSnap.data().siteTitle + " | 文件與網站分享";
+                    document.title = docSnap.data().siteTitle + " | 知識庫系統";
                 }
             });
 
@@ -481,7 +483,7 @@
                 applyFiltersAndRender();
             }, (error) => {
                 console.error("Firestore Error:", error);
-                DOM.container.innerHTML = `<div class="col-span-full text-center text-azuki p-4 bg-red-50 rounded">讀取資料失敗，請確認連線。</div>`;
+                DOM.container.innerHTML = `<div class="col-span-full text-center text-alert p-4 bg-red-50 rounded">讀取資料失敗，請確認連線。</div>`;
             });
         }
 
@@ -566,6 +568,16 @@
             const dUrl = link.driveUrl || (link.type === 'document' ? link.url : '');
             const wUrl = link.websiteUrl || (link.type === 'website' ? link.url : '');
 
+            // Process creator display name (strip internal domains)
+            let creatorDisplay = '匿名';
+            if (link.creatorEmail) {
+                if (link.creatorEmail === ADMIN_INTERNAL_EMAIL) {
+                    creatorDisplay = '管理員';
+                } else {
+                    creatorDisplay = link.creatorEmail.replace(COLLAB_DOMAIN, '');
+                }
+            }
+
             // Permission Logic
             let canEdit = false;
             if (currentUser && !currentUser.isAnonymous) {
@@ -576,8 +588,8 @@
 
             const actionsHtml = canEdit ? `
                 <div class="flex gap-2 mt-3 pt-3 border-t border-border">
-                    <button onclick="editItem('${link.id}')" class="text-xs text-matcha hover:underline"><i class="fa-solid fa-pen"></i> 編輯</button>
-                    <button onclick="deleteItem('${link.id}')" class="text-xs text-azuki hover:underline"><i class="fa-solid fa-trash"></i> 刪除</button>
+                    <button onclick="editItem('${link.id}')" class="text-xs text-crimson hover:underline"><i class="fa-solid fa-pen"></i> 編輯</button>
+                    <button onclick="deleteItem('${link.id}')" class="text-xs text-alert hover:underline"><i class="fa-solid fa-trash"></i> 刪除</button>
                 </div>
             ` : '';
 
@@ -586,14 +598,14 @@
                 linksHtml += `<a href="${dUrl}" target="_blank" onclick="window.incrementView(event, '${link.id}', ${views}, '${dUrl}')" class="inline-flex items-center gap-1.5 text-sm text-[#4285F4] hover:text-blue-700 hover:underline bg-blue-50 px-2.5 py-1.5 rounded-md border border-blue-100 transition"><i class="fa-brands fa-google-drive"></i> 雲端文件</a>`;
             }
             if (wUrl) {
-                linksHtml += `<a href="${wUrl}" target="_blank" onclick="window.incrementView(event, '${link.id}', ${views}, '${wUrl}')" class="inline-flex items-center gap-1.5 text-sm text-matcha hover:text-matchaDark hover:underline bg-washi px-2.5 py-1.5 rounded-md border border-matcha/30 transition"><i class="fa-solid fa-globe"></i> 一般網站</a>`;
+                linksHtml += `<a href="${wUrl}" target="_blank" onclick="window.incrementView(event, '${link.id}', ${views}, '${wUrl}')" class="inline-flex items-center gap-1.5 text-sm text-crimson hover:text-crimsonDark hover:underline bg-rice px-2.5 py-1.5 rounded-md border border-crimson/30 transition"><i class="fa-solid fa-globe"></i> 一般網站</a>`;
             }
 
             return `
                 <div class="bg-white p-5 rounded-lg border border-border card-hover flex flex-col justify-between h-full relative">
                     <div>
                         <div class="flex justify-between items-start mb-2">
-                            <span class="inline-block px-2 py-1 bg-washi text-xs text-gray-600 rounded-sm border border-border">${link.category || '未分類'}</span>
+                            <span class="inline-block px-2 py-1 bg-rice text-xs text-gray-600 rounded-sm border border-border">${link.category || '未分類'}</span>
                             <span class="text-xs text-gray-400 flex items-center gap-1" title="觀看次數">
                                 <i class="fa-regular fa-eye"></i> ${views}
                             </span>
@@ -606,7 +618,7 @@
                     
                     <div class="mt-auto">
                         <div class="flex justify-between items-center text-xs text-gray-400 border-t border-border/50 pt-2">
-                            <span>建立者: ${link.creatorEmail ? link.creatorEmail.split('@')[0] : '匿名'}</span>
+                            <span>建立者: ${creatorDisplay}</span>
                             <span>${dateStr}</span>
                         </div>
                         ${actionsHtml}
@@ -666,8 +678,8 @@
             authMode = mode;
             const tabCollab = document.getElementById('tabCollab');
             const tabAdmin = document.getElementById('tabAdmin');
-            const emailContainer = document.getElementById('emailInputContainer');
-            const emailInput = document.getElementById('emailInput');
+            const usernameContainer = document.getElementById('usernameInputContainer');
+            const usernameInput = document.getElementById('usernameInput');
             const submitBtn = document.getElementById('authSubmitBtn');
             const authError = document.getElementById('authError');
             
@@ -675,16 +687,16 @@
             document.getElementById('passwordInput').value = '';
 
             if (mode === 'admin') {
-                tabAdmin.className = "flex-1 py-2 text-sm font-bold text-matcha border-b-2 border-matcha transition";
-                tabCollab.className = "flex-1 py-2 text-sm text-gray-500 hover:text-matcha transition";
-                emailContainer.classList.add('hidden');
-                emailInput.required = false;
+                tabAdmin.className = "flex-1 py-2 text-sm font-bold text-crimson border-b-2 border-crimson transition";
+                tabCollab.className = "flex-1 py-2 text-sm text-gray-500 hover:text-crimson transition";
+                usernameContainer.classList.add('hidden');
+                usernameInput.required = false;
                 submitBtn.textContent = '登入管理員';
             } else {
-                tabCollab.className = "flex-1 py-2 text-sm font-bold text-matcha border-b-2 border-matcha transition";
-                tabAdmin.className = "flex-1 py-2 text-sm text-gray-500 hover:text-matcha transition";
-                emailContainer.classList.remove('hidden');
-                emailInput.required = true;
+                tabCollab.className = "flex-1 py-2 text-sm font-bold text-crimson border-b-2 border-crimson transition";
+                tabAdmin.className = "flex-1 py-2 text-sm text-gray-500 hover:text-crimson transition";
+                usernameContainer.classList.remove('hidden');
+                usernameInput.required = true;
                 submitBtn.textContent = '登入協作者';
             }
         };
@@ -752,7 +764,7 @@
             const titleEl = document.getElementById('siteTitleDisplay');
             const currentTitle = titleEl.textContent;
             
-            titleEl.outerHTML = `<input id="siteTitleInput" type="text" value="${currentTitle}" class="text-2xl font-serif font-bold text-matchaDark tracking-wider bg-transparent border-b border-matcha focus:outline-none w-48" onblur="window.saveSiteTitle(this.value)" onkeydown="if(event.key === 'Enter') this.blur();" autofocus>`;
+            titleEl.outerHTML = `<input id="siteTitleInput" type="text" value="${currentTitle}" class="text-2xl font-serif font-bold text-crimsonDark tracking-wider bg-transparent border-b border-crimson focus:outline-none w-48" onblur="window.saveSiteTitle(this.value)" onkeydown="if(event.key === 'Enter') this.blur();" autofocus>`;
             document.getElementById('editTitleBtn').classList.add('hidden');
             setTimeout(() => { document.getElementById('siteTitleInput').focus(); }, 10);
         };
@@ -770,7 +782,7 @@
             
             // Revert UI if snapshot hasn't caught it yet
             if (inputEl) {
-                inputEl.outerHTML = `<h1 id="siteTitleDisplay" class="text-2xl font-serif font-bold text-matchaDark tracking-wider">${newTitle || '和風知識庫'}</h1>`;
+                inputEl.outerHTML = `<h1 id="siteTitleDisplay" class="text-2xl font-serif font-bold text-crimsonDark tracking-wider">${newTitle || '中式知識庫'}</h1>`;
                 document.getElementById('editTitleBtn').classList.remove('hidden');
             }
         };
@@ -802,8 +814,8 @@
                 <div class="flex justify-between items-center py-2 border-b border-border last:border-0" id="cat-row-${c.id}">
                     <span class="text-sm text-ink" id="cat-name-${c.id}">${c.name}</span>
                     <div class="flex gap-2" id="cat-acts-${c.id}">
-                        <button onclick="window.editCategoryUI('${c.id}', '${c.name}')" class="text-matcha hover:text-matchaDark text-xs px-2 py-1"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="window.deleteCategoryUI(this, '${c.id}')" class="text-azuki hover:text-red-700 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="window.editCategoryUI('${c.id}', '${c.name}')" class="text-crimson hover:text-crimsonDark text-xs px-2 py-1"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="window.deleteCategoryUI(this, '${c.id}')" class="text-alert hover:text-red-700 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `).join('');
@@ -812,8 +824,8 @@
         window.editCategoryUI = (id, oldName) => {
             const nameEl = document.getElementById(`cat-name-${id}`);
             const actsEl = document.getElementById(`cat-acts-${id}`);
-            nameEl.innerHTML = `<input type="text" id="cat-input-${id}" value="${oldName}" class="w-full px-2 py-1 text-sm border border-matcha rounded focus:outline-none">`;
-            actsEl.innerHTML = `<button onclick="window.saveCategory('${id}')" class="text-matcha text-xs bg-washi border border-matcha px-2 py-1 rounded"><i class="fa-solid fa-check"></i> 儲存</button>`;
+            nameEl.innerHTML = `<input type="text" id="cat-input-${id}" value="${oldName}" class="w-full px-2 py-1 text-sm border border-crimson rounded focus:outline-none">`;
+            actsEl.innerHTML = `<button onclick="window.saveCategory('${id}')" class="text-crimson text-xs bg-rice border border-crimson px-2 py-1 rounded"><i class="fa-solid fa-check"></i> 儲存</button>`;
         };
 
         window.saveCategory = async (id) => {
@@ -873,37 +885,38 @@
                     try {
                         await signInWithEmailAndPassword(auth, ADMIN_INTERNAL_EMAIL, password);
                     } catch (adminErr) {
-                        // If internal admin email doesn't exist yet, we create it with this password! (First-time setup)
+                        // If internal admin email doesn't exist yet, we check for default password 'admin123'
                         if (adminErr.code === 'auth/user-not-found' || adminErr.code === 'auth/invalid-credential') {
-                            try {
-                                await createUserWithEmailAndPassword(auth, ADMIN_INTERNAL_EMAIL, password);
-                            } catch (createErr) {
-                                if (createErr.code === 'auth/email-already-in-use') {
-                                    throw new Error('密碼錯誤！'); // Email exists, so it was just a wrong password
-                                } else {
+                            if (password === 'admin123') {
+                                try {
+                                    await createUserWithEmailAndPassword(auth, ADMIN_INTERNAL_EMAIL, password);
+                                } catch (createErr) {
                                     throw createErr;
                                 }
+                            } else {
+                                throw new Error('管理員預設密碼錯誤！(提示：首次登入預設為 admin123)');
                             }
                         } else {
                             throw adminErr; // Other errors (e.g. wrong password on existing account)
                         }
                     }
                 } else {
-                    // Collaborator Logic (Login Only)
-                    const email = document.getElementById('emailInput').value;
-                    await signInWithEmailAndPassword(auth, email, password);
+                    // Collaborator Logic (Login Only with Username)
+                    let username = document.getElementById('usernameInput').value.trim();
+                    const internalEmail = username + COLLAB_DOMAIN;
+                    await signInWithEmailAndPassword(auth, internalEmail, password);
                 }
                 
                 closeAuthModal();
                 document.getElementById('authForm').reset();
             } catch (error) {
                 errorDiv.classList.remove('hidden');
-                if (error.message === '密碼錯誤！') {
-                    errorDiv.textContent = '管理員密碼錯誤。';
+                if (error.message.includes('管理員預設密碼錯誤')) {
+                    errorDiv.textContent = error.message;
                 } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                    errorDiv.textContent = '信箱或密碼錯誤。';
-                } else if (error.code === 'auth/email-already-in-use') {
-                    errorDiv.textContent = '此信箱已被註冊。';
+                    errorDiv.textContent = '帳號或密碼錯誤。';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorDiv.textContent = '帳號格式不正確，請勿使用特殊符號或空白。';
                 } else {
                     errorDiv.textContent = '發生錯誤：' + error.message;
                 }
@@ -968,8 +981,9 @@
             e.preventDefault();
             if (!isAdmin) return;
 
-            const email = document.getElementById('newCollabEmail').value;
+            const username = document.getElementById('newCollabUsername').value.trim();
             const pwd = document.getElementById('newCollabPwd').value;
+            const internalEmail = username + COLLAB_DOMAIN;
             const msgDiv = document.getElementById('collabMsg');
             const submitBtn = document.getElementById('collabSubmitBtn');
             const originalBtnText = submitBtn.textContent;
@@ -981,17 +995,19 @@
 
             try {
                 // Use secondaryAuth so the admin doesn't get logged out!
-                await createUserWithEmailAndPassword(secondaryAuth, email, pwd);
+                await createUserWithEmailAndPassword(secondaryAuth, internalEmail, pwd);
                 await signOut(secondaryAuth); // immediately sign out secondary instance
                 
                 msgDiv.classList.add('bg-green-50', 'text-green-700', 'border-green-100');
-                msgDiv.textContent = `成功！協作者 ${email} 已建立。`;
+                msgDiv.textContent = `成功！協作者 ${username} 已建立。`;
                 msgDiv.classList.remove('hidden');
                 document.getElementById('addCollabForm').reset();
             } catch (error) {
-                msgDiv.classList.add('bg-red-50', 'text-azuki', 'border-red-100');
+                msgDiv.classList.add('bg-red-50', 'text-alert', 'border-red-100');
                 if (error.code === 'auth/email-already-in-use') {
-                    msgDiv.textContent = '建立失敗：此信箱已經是協作者了。';
+                    msgDiv.textContent = '建立失敗：此帳號名稱已經被使用了。';
+                } else if (error.code === 'auth/invalid-email') {
+                    msgDiv.textContent = '建立失敗：帳號格式不正確，請勿使用特殊符號或空白。';
                 } else {
                     msgDiv.textContent = '建立失敗：' + error.message;
                 }
@@ -1082,23 +1098,20 @@
         };
 
         window.deleteItem = async (id) => {
-            // No custom modal implemented for confirm to keep code compact, using simple logic check
-            // Since alert/confirm are discouraged, I'll build a quick inline confirm or just delete.
-            // Let's implement a safe soft delete button state change.
             const btn = event.currentTarget;
             if (btn.dataset.confirm !== 'true') {
                 btn.dataset.confirm = 'true';
                 const originalHtml = btn.innerHTML;
                 btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 確認刪除?';
-                btn.classList.replace('text-azuki', 'text-white');
-                btn.classList.add('bg-azuki', 'px-2', 'py-1', 'rounded', '-my-1');
+                btn.classList.replace('text-alert', 'text-white');
+                btn.classList.add('bg-alert', 'px-2', 'py-1', 'rounded', '-my-1');
                 
                 setTimeout(() => {
                     if (btn) {
                         btn.dataset.confirm = 'false';
                         btn.innerHTML = originalHtml;
-                        btn.classList.replace('text-white', 'text-azuki');
-                        btn.classList.remove('bg-azuki', 'px-2', 'py-1', 'rounded', '-my-1');
+                        btn.classList.replace('text-white', 'text-alert');
+                        btn.classList.remove('bg-alert', 'px-2', 'py-1', 'rounded', '-my-1');
                     }
                 }, 3000);
                 return;
