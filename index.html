@@ -93,7 +93,6 @@
 </head>
 <body class="min-h-screen flex flex-col relative">
 
-    <!-- Decorative Hand-drawn Elements (Pop Art Style) -->
     <!-- Top Right Star -->
     <svg class="absolute top-24 right-10 md:right-24 w-16 h-16 z-0 animate-[spin_10s_linear_infinite]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M50 5 L60 40 L95 50 L60 60 L50 95 L40 60 L5 50 L40 40 Z" fill="#FFD13B" stroke="#1A1A1A" stroke-width="6" stroke-linejoin="round"/>
@@ -123,7 +122,6 @@
         <path d="M80 80 L90 80 L90 70 C90 65, 100 65, 100 70 L100 80 L110 80 C115 80, 115 90, 110 90 L100 90 L100 100 C100 105, 90 105, 90 100 L90 90 L80 90 C75 90, 75 80, 80 80 Z" fill="#4DB8FF" stroke="#1A1A1A" stroke-width="5" stroke-linejoin="round"/>
     </svg>
 
-    <!-- Navigation Bar -->
     <nav class="bg-popBg border-b-[4px] border-popInk shadow-[0_4px_0_0_#1A1A1A] sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 md:h-20">
@@ -156,7 +154,6 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="flex-grow max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 md:py-12 z-20 relative">
         
         <!-- Controls Section (Search & Filters) -->
@@ -192,7 +189,6 @@
             </div>
         </div>
 
-        <!-- Pagination -->
         <div id="pagination" class="flex justify-between items-center bg-white p-5 rounded-2xl pop-border pop-shadow hidden">
             <span id="pageInfo" class="text-lg font-bold text-popInk">0 of 0</span>
             <div class="flex gap-3">
@@ -214,7 +210,6 @@
         </div>
     </footer>
 
-    <!-- Auth Modal -->
     <div id="authModal" class="fixed inset-0 bg-popInk/40 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-3xl pop-shadow-lg pop-border-thick w-full max-w-md p-8 transform scale-95 transition-transform duration-300 relative">
             <div class="absolute -top-6 -right-6">
@@ -250,7 +245,6 @@
         </div>
     </div>
 
-    <!-- Password Reset Modal -->
     <div id="passwordModal" class="fixed inset-0 bg-popInk/40 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-3xl pop-shadow-lg pop-border-thick w-full max-w-sm p-8 transform scale-95 transition-transform duration-300 relative">
             <button onclick="closePasswordModal()" class="absolute -top-6 -right-6 bg-popRed text-white pop-border rounded-full w-12 h-12 flex items-center justify-center pop-btn text-xl"><i class="fa-solid fa-xmark"></i></button>
@@ -273,7 +267,6 @@
         </div>
     </div>
 
-    <!-- Collaborator Management Modal -->
     <div id="collaboratorModal" class="fixed inset-0 bg-popInk/40 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-3xl pop-shadow-lg pop-border-thick w-full max-w-md p-8 transform scale-95 transition-transform duration-300 relative">
             <button onclick="closeCollaboratorModal()" class="absolute -top-6 -right-6 bg-popRed text-white pop-border rounded-full w-12 h-12 flex items-center justify-center pop-btn text-xl"><i class="fa-solid fa-xmark"></i></button>
@@ -295,7 +288,6 @@
         </div>
     </div>
 
-    <!-- Add/Edit Modal -->
     <div id="itemModal" class="fixed inset-0 bg-popInk/40 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-3xl pop-shadow-lg pop-border-thick w-full max-w-lg p-8 transform scale-95 transition-transform duration-300 relative my-8 max-h-[90vh] overflow-y-auto">
             <button onclick="closeItemModal()" class="absolute top-4 right-4 bg-popRed text-white pop-border rounded-full w-10 h-10 flex items-center justify-center pop-btn text-lg"><i class="fa-solid fa-xmark"></i></button>
@@ -333,7 +325,6 @@
         </div>
     </div>
 
-    <!-- Category Management Modal -->
     <div id="categoryModal" class="fixed inset-0 bg-popInk/40 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-3xl pop-shadow-lg pop-border-thick w-full max-w-md p-8 transform scale-95 transition-transform duration-300 relative">
             <button onclick="closeCategoryModal()" class="absolute -top-6 -right-6 bg-popRed text-white pop-border rounded-full w-12 h-12 flex items-center justify-center pop-btn text-xl"><i class="fa-solid fa-xmark"></i></button>
@@ -705,7 +696,7 @@
                 usernameContainer.classList.add('hidden');
                 usernameInput.required = false;
                 submitBtn.textContent = 'Admin 登入';
-                submitBtn.className = "w-full bg-popRed hover:bg-red-500 text-white font-bold py-4 rounded-xl text-xl pop-btn tracking-wider uppercase";
+                submitBtn.className = "w-full bg-popRed hover:bg-red-50 text-white font-bold py-4 rounded-xl text-xl pop-btn tracking-wider uppercase";
             } else {
                 tabCollab.className = "flex-1 py-3 text-lg font-bold text-popInk bg-popYellow pop-border-thick border-b-0 rounded-t-xl transition translate-y-[3px]";
                 tabAdmin.className = "flex-1 py-3 text-lg font-bold text-gray-400 hover:text-popInk transition border-[3px] border-transparent border-b-0 rounded-t-xl";
