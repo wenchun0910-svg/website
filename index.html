@@ -74,29 +74,50 @@
 <body class="min-h-screen flex flex-col text-base"> 
 
     <!-- Navigation Bar -->
-    <nav class="bg-white border-b-2 border-popInk sticky top-0 z-40">
-        <div class="max-w-5xl mx-auto px-4">
-            <div class="flex justify-between items-center h-12">
-                <div class="flex items-center gap-3">
+    <nav class="bg-white border-b-2 border-popInk sticky top-0 z-40 py-2">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col lg:flex-row justify-between items-center gap-3">
+                
+                <!-- 左方：網站標題 -->
+                <div class="flex items-center gap-3 shrink-0 w-full lg:w-auto justify-between lg:justify-start">
                     <h1 id="siteTitleDisplay" class="text-xl font-bold tracking-widest text-popInk bg-popYellow px-3 py-0.5 rounded pop-border shadow-[2px_2px_0_0_#1a1a1a]">知識庫</h1>
-                    <button id="editTitleBtn" onclick="editSiteTitle()" class="hidden text-sm bg-white pop-border rounded px-2 py-0.5 hover:bg-gray-100"><i class="fa-solid fa-pen"></i></button>
+                    <button id="editTitleBtn" onclick="editSiteTitle()" class="hidden text-sm bg-white pop-border rounded px-2 py-0.5 hover:bg-gray-100 shadow-[2px_2px_0_0_#1a1a1a]"><i class="fa-solid fa-pen"></i></button>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div id="userInfo" class="hidden items-center gap-2 font-bold bg-white px-3 py-1 rounded pop-border text-sm">
-                        <span id="userEmail" class="text-sm"></span>
-                        <span id="userRoleBadge" class="px-1.5 bg-popPurple text-white rounded text-xs"></span>
-                        <button onclick="openPasswordModal()" class="hover:text-popRed text-sm ml-1" title="修改密碼"><i class="fa-solid fa-key"></i></button>
+
+                <!-- 中間：搜尋與分類 -->
+                <div class="flex flex-col sm:flex-row items-center gap-2 flex-grow justify-start lg:justify-center w-full lg:w-auto">
+                    <div class="relative w-full sm:w-64 shrink-0">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-[50%] -translate-y-[50%] text-popInk"></i>
+                        <input type="text" id="searchInput" placeholder="搜尋關鍵字..." 
+                            class="w-full pl-9 pr-3 py-1.5 bg-gray-50 pop-border rounded text-sm focus:outline-none focus:bg-white font-bold transition-colors">
                     </div>
-                    <button id="addBtn" onclick="openAddModal()" class="hidden bg-popGreen text-white px-3 py-1 rounded pop-border pop-shadow font-bold text-sm">
+                    <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                        <select id="categoryFilter" class="bg-white pop-border rounded px-2 py-1.5 text-sm font-bold focus:outline-none cursor-pointer flex-grow sm:w-32 transition-colors">
+                            <option value="all">所有分類</option>
+                        </select>
+                        <button id="manageCatBtn" onclick="openCategoryModal()" class="hidden bg-popYellow px-3 py-1.5 rounded pop-border shadow-[2px_2px_0_0_#1a1a1a] font-bold text-sm whitespace-nowrap hover:bg-yellow-400 transition-colors active:translate-y-0.5 active:shadow-[0px_0px_0_0_#1a1a1a]">
+                            <i class="fa-solid fa-tags"></i> 分類
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 右方：帳號管理與新增按鈕 -->
+                <div class="flex items-center gap-2 shrink-0 flex-wrap justify-start lg:justify-end w-full lg:w-auto">
+                    <div id="userInfo" class="hidden items-center gap-2 font-bold bg-white px-2 py-1.5 rounded pop-border text-xs shadow-[2px_2px_0_0_#1a1a1a]">
+                        <span id="userEmail" class="text-xs"></span>
+                        <span id="userRoleBadge" class="px-1.5 bg-popPurple text-white rounded text-[10px]"></span>
+                        <button onclick="openPasswordModal()" class="hover:text-popRed text-xs ml-1" title="修改密碼"><i class="fa-solid fa-key"></i></button>
+                    </div>
+                    <button id="addBtn" onclick="openAddModal()" class="hidden bg-popGreen text-white px-3 py-1.5 rounded pop-border shadow-[2px_2px_0_0_#1a1a1a] font-bold text-sm active:translate-y-0.5 active:shadow-[0px_0px_0_0_#1a1a1a]">
                         <i class="fa-solid fa-plus mr-1"></i> 新增
                     </button>
-                    <button id="manageUsersBtn" onclick="openCollaboratorModal()" class="hidden bg-popPurple text-white px-3 py-1 rounded pop-border pop-shadow font-bold text-sm">
+                    <button id="manageUsersBtn" onclick="openCollaboratorModal()" class="hidden bg-popPurple text-white px-3 py-1.5 rounded pop-border shadow-[2px_2px_0_0_#1a1a1a] font-bold text-sm active:translate-y-0.5 active:shadow-[0px_0px_0_0_#1a1a1a]">
                         <i class="fa-solid fa-users mr-1"></i> 協作者
                     </button>
-                    <button id="loginBtn" onclick="openAuthModal()" class="bg-popBlue text-white px-3 py-1 rounded pop-border pop-shadow font-bold text-sm">
+                    <button id="loginBtn" onclick="openAuthModal()" class="bg-popBlue text-white px-3 py-1.5 rounded pop-border shadow-[2px_2px_0_0_#1a1a1a] font-bold text-sm active:translate-y-0.5 active:shadow-[0px_0px_0_0_#1a1a1a]">
                         <i class="fa-solid fa-right-to-bracket mr-1"></i> 登入
                     </button>
-                    <button id="logoutBtn" onclick="handleLogout()" class="hidden bg-white px-3 py-1 rounded pop-border pop-shadow font-bold text-sm">
+                    <button id="logoutBtn" onclick="handleLogout()" class="hidden bg-white px-3 py-1.5 rounded pop-border shadow-[2px_2px_0_0_#1a1a1a] font-bold text-sm active:translate-y-0.5 active:shadow-[0px_0px_0_0_#1a1a1a]">
                         登出
                     </button>
                 </div>
@@ -105,25 +126,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-4 flex flex-col gap-4">
-        
-        <!-- Controls Section -->
-        <div class="bg-white p-3 rounded-xl pop-border pop-shadow flex flex-col sm:flex-row gap-3 items-center justify-start">
-            <div class="relative w-full sm:w-72 shrink-0">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-popInk"></i>
-                <input type="text" id="searchInput" placeholder="搜尋關鍵字..." 
-                    class="w-full pl-9 pr-3 py-2 bg-gray-50 pop-border rounded text-base focus:outline-none focus:bg-white font-bold transition-colors">
-            </div>
-            
-            <div class="flex items-center gap-3 shrink-0 w-full sm:w-auto">
-                <select id="categoryFilter" class="bg-white pop-border rounded px-3 py-2 text-base font-bold focus:outline-none cursor-pointer flex-grow sm:w-40 transition-colors">
-                    <option value="all">所有分類</option>
-                </select>
-                <button id="manageCatBtn" onclick="openCategoryModal()" class="hidden bg-popYellow px-4 py-2 rounded pop-border pop-shadow font-bold text-base whitespace-nowrap hover:bg-yellow-400 transition-colors">
-                    <i class="fa-solid fa-tags"></i> 分類
-                </button>
-            </div>
-        </div>
+    <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-6 flex flex-col gap-4">
 
         <!-- Links Grid -->
         <div id="linksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -284,7 +287,7 @@
         import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // === 1. Firebase Initialization ===
-                  const firebaseConfig = {
+                const firebaseConfig = {
   apiKey: "AIzaSyC_hAeSmuRluu6sNvgGvY95NxS3DPjuzWg",
   authDomain: "website-a6054.firebaseapp.com",
   projectId: "website-a6054",
