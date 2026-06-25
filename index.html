@@ -108,18 +108,18 @@
     <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-4 flex flex-col gap-4">
         
         <!-- Controls Section -->
-        <div class="bg-white p-3 rounded-xl pop-border pop-shadow flex flex-col sm:flex-row gap-3 items-center">
-            <div class="relative flex-grow w-full">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-sm text-popInk"></i>
+        <div class="bg-white p-3 rounded-xl pop-border pop-shadow flex flex-col sm:flex-row gap-3 items-center justify-start">
+            <div class="relative w-full sm:w-72 shrink-0">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-popInk"></i>
                 <input type="text" id="searchInput" placeholder="搜尋關鍵字..." 
-                    class="w-full pl-9 pr-3 py-1.5 bg-gray-50 pop-border rounded text-sm focus:outline-none focus:bg-white font-bold">
+                    class="w-full pl-9 pr-3 py-2 bg-gray-50 pop-border rounded text-base focus:outline-none focus:bg-white font-bold transition-colors">
             </div>
             
-            <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto">
-                <select id="categoryFilter" class="bg-white pop-border rounded px-3 py-1.5 text-sm font-bold focus:outline-none cursor-pointer flex-grow sm:w-32">
+            <div class="flex items-center gap-3 shrink-0 w-full sm:w-auto">
+                <select id="categoryFilter" class="bg-white pop-border rounded px-3 py-2 text-base font-bold focus:outline-none cursor-pointer flex-grow sm:w-40 transition-colors">
                     <option value="all">所有分類</option>
                 </select>
-                <button id="manageCatBtn" onclick="openCategoryModal()" class="hidden bg-popYellow px-3 py-1.5 rounded pop-border pop-shadow font-bold text-sm whitespace-nowrap">
+                <button id="manageCatBtn" onclick="openCategoryModal()" class="hidden bg-popYellow px-4 py-2 rounded pop-border pop-shadow font-bold text-base whitespace-nowrap hover:bg-yellow-400 transition-colors">
                     <i class="fa-solid fa-tags"></i> 分類
                 </button>
             </div>
@@ -284,7 +284,7 @@
         import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // === 1. Firebase Initialization ===
-                 const firebaseConfig = {
+                  const firebaseConfig = {
   apiKey: "AIzaSyC_hAeSmuRluu6sNvgGvY95NxS3DPjuzWg",
   authDomain: "website-a6054.firebaseapp.com",
   projectId: "website-a6054",
